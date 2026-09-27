@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6C4CE0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TailorPro">
+<meta name="description" content="Customers, measurements and orders for tailors">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+
+<title>TailorPro</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #6C4CE0;
+  --primary-dark: #5A3ED1;
+  --primary-light: #F1EEFC;
+  --success: #1E9E63;
+  --success-light: #E6F4EA;
+  --danger: #E0433B;
+  --danger-light: #FDECEB;
+  --grey-light: #F0F0F0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: #eeeeee;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #111;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.app {
+  max-width: 430px;
+  min-height: 100vh;
+  margin: auto;
+  background: white;
+  padding: 24px 20px calc(90px + env(safe-area-inset-bottom));
+  position: relative;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+h1 {
+  font-size: 26px;
+  line-height: 1.1;
+  margin: 8px 0 4px;
+}
+
+h2 {
+  font-size: 23px;
+  margin: 5px 0 20px;
+}
+
+.muted {
+  color: #777;
+  font-size: 13px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gear {
+  border: none;
+  background: #f5f5f5;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.brand-center {
+  text-align: center;
+  margin: 4px 0 18px;
+}
+
+.brand-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  background: var(--primary-light);
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  margin: 0 auto 8px;
+}
+
+.search {
+  background: #f5f5f5;
+  border-radius: 14px;
+  padding: 14px;
+  margin: 15px 0 20px;
+}
+
+.search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 90%;
+  font-size: 16px;
+}
+
+.list-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #eee;
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  text-align: left;
+  width: 100%;
+}
+
+.list-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.list-text {
+  flex: 1;
+}
+
+.list-text b {
+  display: block;
+  font-size: 15px;
+}
+
+.list-text span {
+  color: #777;
+  font-size: 12px;
+}
+
+.chev {
+  color: #bbb;
+  font-size: 18px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 17px;
+  padding: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.action {
+  height: 115px;
+  text-align: left;
+}
+
+.action b {
+  display: block;
+  font-size: 17px;
+  margin: 18px 0 5px;
+}
+
+.action span {
+  color: #777;
+  font-size: 12px;
+}
+
+.nudge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--primary-light);
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 14px;
+  font-size: 13px;
+}
+
+.nudge-text {
+  flex: 1;
+  line-height: 1.35;
+}
+
+.nudge-text b {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.nudge button {
+  border: none;
+  border-radius: 10px;
+  padding: 9px 13px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--primary);
+  color: white;
+}
+
+.nudge .nudge-x {
+  background: none;
+  color: #888;
+  padding: 6px;
+  font-size: 15px;
+}
+
+.cover {
+  width: 100%;
+  height: 130px;
+  border: none;
+  padding: 0;
+  border-radius: 18px;
+  background-color: var(--primary-light);
+  background-size: cover;
+  background-position: center;
+  margin: 15px 0 20px;
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.cover.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.cover-edit-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+}
+
+button, a.btn, a.quickcell {
+  cursor: pointer;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 13px;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn.secondary {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.btn.danger {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.back {
+  border: none;
+  background: none;
+  padding: 0 0 20px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--primary);
+}
+
+.customer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 2px;
+  border-bottom: 1px solid #eee;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.customer-info {
+  flex: 1;
+}
+
+.name {
+  font-weight: 650;
+}
+
+.vip-pill {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.profile {
+  text-align: center;
+}
+
+.profile .avatar {
+  width: 78px;
+  height: 78px;
+  margin: auto;
+  font-size: 22px;
+}
+
+.photo-picker {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 4px auto 4px;
+  font-size: 22px;
+  border: none;
+  overflow: hidden;
+}
+
+.photo-picker img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-picker span {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.photo-hint {
+  text-align: center;
+  color: #777;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.quick {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.quickcell {
+  text-decoration: none;
+  color: #111;
+  text-align: center;
+  font-size: 12px;
+  border: none;
+  background: none;
+}
+
+.quick-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  margin: 0 auto 6px;
+}
+
+.quick-icon.green {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.quick-icon.grey {
+  background: var(--grey-light);
+  color: #555;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  margin: 0 -20px 20px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 13px;
+  border: none;
+  background: white;
+  color: #777;
+  font-size: 13px;
+}
+
+.tabs .active {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.row .row-icon {
+  width: 26px;
+  text-align: center;
+}
+
+.row .row-label {
+  flex: 1;
+  color: #555;
+}
+
+.row b.danger-text {
+  color: var(--danger);
+}
+
+.form label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 13px 0 6px;
+}
+
+.form input,
+.form textarea,
+.form select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 11px;
+  font-size: 16px;
+  font-family: inherit;
+  background: white;
+}
+
+.form textarea {
+  min-height: 90px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 0;
+}
+
+.checkbox-row input {
+  width: 18px;
+  height: 18px;
+}
+
+.checkbox-row label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.measurements {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.chip {
+  flex-shrink: 0;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 20px;
+  padding: 9px 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+.chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  background: #f7f7f7;
+  border-radius: 15px;
+  padding: 14px;
+}
+
+.stat .label {
+  font-size: 11px;
+  color: #777;
+}
+
+.stat .value {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 430px;
+  width: 100%;
+  background: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav button {
+  flex: 1;
+  padding: 12px 5px;
+  border: none;
+  background: white;
+  color: #777;
+  font-size: 11px;
+}
+
+.nav .active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.fab {
+  position: fixed;
+  right: max(calc((100vw - 430px)/2 + 20px), 20px);
+  bottom: calc(70px + env(safe-area-inset-bottom));
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 25px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #777;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: #777;
+}
+
+.toast {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #111;
+  color: white;
+  padding: 11px 18px;
+  border-radius: 30px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 50;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.status-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #f0f0f0;
+}
+
+.status-pill.done {
+  background: var(--grey-light);
+  color: #555;
+}
+
+.status-pill.progress {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.status-pill.ready {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.order-card {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.order-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 13px;
+  background: var(--primary-light);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.order-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-body {
+  flex: 1;
+}
+
+.order-photo {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 10px;
+  display: block;
+}
+
+.stage-tracker {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 16px 0 4px;
+}
+
+.stage-tracker::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  background: #eee;
+  z-index: 0;
+}
+
+.stage {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  font-size: 10px;
+  color: #999;
+}
+
+.stage-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #eee;
+  border: 2px solid #eee;
+  margin: 0 auto 6px;
+}
+
+.stage.done .stage-dot {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.stage.current .stage-dot {
+  background: white;
+  border-color: var(--primary);
+}
+
+.stage.done, .stage.current {
+  color: #111;
+  font-weight: 600;
+}
+
+.context-card {
+  background: var(--primary-light);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.context-card .stats {
+  margin-bottom: 0;
+}
+
+.context-card .stat {
+  background: white;
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  max-width: 430px;
+  margin: auto;
+  background: #2F6FED;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  z-index: 100;
+}
+
+.splash.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-title {
+  font-family: 'Fredoka', -apple-system, sans-serif;
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 1.02;
+  margin: 0;
+}
+
+.splash-sub {
+  font-family: 'Fredoka', -apple-system, sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  margin: 12px 0 0;
+}
+
+.splash-credit {
+  position: absolute;
+  bottom: 36px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 300;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-box {
+  background: white;
+  width: 100%;
+  max-width: 430px;
+  border-radius: 20px 20px 0 0;
+  padding: 22px 20px 34px;
+}
+
+.modal-box p {
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app" id="app">
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+
+  <h1 class="splash-title">HEY<br>TAILOR!</h1>
+  <p class="splash-sub">it's time</p>
+
+  <div class="splash-credit">from Anwar Freedom</div>
+
+</div>
+
+<!-- LOADING -->
+<section id="loading" class="screen active">
+  <div class="loading">Loading your workshop…</div>
+</section>
+
+<!-- HOME -->
+<section id="home" class="screen">
+
+  <div class="top">
+    <div class="muted" id="homeEyebrow">TAILOR</div>
+    <button class="gear" onclick="show('settings')">⚙</button>
+  </div>
+
+  <button class="cover" id="homeCover" onclick="homeCoverInput.click()"></button>
+  <input id="homeCoverInput" type="file" accept="image/*" style="display:none" onchange="handleCoverPhotoSelect(event)">
+
+  <h1 id="homeTitle">
+    Your customers.<br>
+    Your business.
+  </h1>
+
+  <div class="search">
+    🔍
+    <input
+      id="homeSearch"
+      placeholder="Search customer..."
+      oninput="searchFromHome(this.value)"
+    >
+  </div>
+
+  <div class="grid">
+
+    <button class="card action" onclick="show('customers')">
+      👤
+      <b>Customers</b>
+      <span>View your customers</span>
+    </button>
+
+    <button class="card action" onclick="newCustomer()">
+      ＋
+      <b>New customer</b>
+      <span>Add someone new</span>
+    </button>
+
+    <button class="card action" onclick="show('orders')">
+      📦
+      <b>Orders</b>
+      <span>See your orders</span>
+    </button>
+
+    <button class="card action" onclick="show('customers')">
+      📏
+      <b>Measurements</b>
+      <span>Find measurements</span>
+    </button>
+
+  </div>
+
+  <div id="installNudge"></div>
+  <div id="backupNudge"></div>
+
+</section>
+
+
+<!-- CUSTOMERS -->
+<section id="customers" class="screen">
+
+  <div class="top">
+    <h2>Customers</h2>
+    <button onclick="newCustomer()">＋</button>
+  </div>
+
+  <div class="search">
+    🔍
+    <input
+      id="customerSearch"
+      placeholder="Search name or phone..."
+      oninput="renderCustomers(this.value)"
+    >
+  </div>
+
+  <div id="customerList"></div>
+
+  <button class="fab" onclick="newCustomer()">＋</button>
+
+</section>
+
+
+<!-- CUSTOMER PROFILE -->
+<section id="profile" class="screen">
+
+  <button class="back" onclick="show('customers')">‹ Customers</button>
+
+  <div id="profileContent"></div>
+
+</section>
+
+
+<!-- MEASUREMENTS -->
+<section id="measurements" class="screen">
+
+  <button class="back" onclick="openProfile(currentCustomer)">‹ Customer</button>
+
+  <h2>Measurements</h2>
+
+  <div class="chips" id="measurementChips"></div>
+
+  <div id="measurementForm"></div>
+
+</section>
+
+
+<!-- NEW / EDIT CUSTOMER -->
+<section id="newCustomer" class="screen">
+
+  <button class="back" onclick="cancelCustomerForm()">‹ Back</button>
+
+  <h2 id="customerFormTitle">New customer</h2>
+
+  <button class="photo-picker" id="customerPhotoPicker" onclick="customerPhotoInput.click()">
+    📷
+    <span>Add Photo</span>
+  </button>
+  <div class="photo-hint">Tap to add a photo (optional)</div>
+  <input id="customerPhotoInput" type="file" accept="image/*" style="display:none" onchange="handleCustomerPhotoSelect(event)">
+
+  <div class="form">
+
+    <label>FULL NAME</label>
+    <input id="newName" placeholder="e.g. Anwar Freedom">
+
+    <label>PHONE</label>
+    <input id="newPhone" placeholder="0712 345 678">
+
+    <label>LOCATION</label>
+    <input id="newLocation" placeholder="Dar es Salaam">
+
+    <label>NOTES</label>
+    <textarea id="newNotes" placeholder="Useful things to remember..."></textarea>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="newVip">
+      <label for="newVip">Mark as VIP customer</label>
+    </div>
+
+    <br>
+
+    <button class="btn" onclick="saveCustomer()" id="customerSaveBtn">Save customer</button>
+
+  </div>
+
+</section>
+
+
+<!-- NEW / EDIT ORDER -->
+<section id="newOrder" class="screen">
+
+  <button class="back" id="newOrderBack" onclick="show('orders')">‹ Orders</button>
+
+  <h2 id="orderFormTitle">New order</h2>
+
+  <div id="orderContextHeader"></div>
+
+  <div class="form">
+
+    <label>CUSTOMER</label>
+    <select id="orderCustomer"></select>
+
+    <label>GARMENT</label>
+    <input id="orderGarment" placeholder="e.g. Two-piece suit">
+
+    <label>PRICE (<span class="curr">TSh</span>)</label>
+    <input id="orderPrice" inputmode="numeric" placeholder="e.g. 350000">
+
+    <label>AMOUNT PAID SO FAR (<span class="curr">TSh</span>)</label>
+    <input id="orderPaid" inputmode="numeric" placeholder="e.g. 100000">
+
+    <label>DUE DATE</label>
+    <input id="orderDue" type="date">
+
+    <label>STATUS</label>
+    <select id="orderStatus">
+      <option>In progress</option>
+      <option>Ready for fitting</option>
+      <option>Done</option>
+    </select>
+
+    <label>PHOTO (OPTIONAL)</label>
+    <input id="orderPhotoInput" type="file" accept="image/*" onchange="handlePhotoSelect(event)">
+    <img id="orderPhotoPreview" class="order-photo" style="display:none">
+
+    <br><br>
+
+    <button class="btn" onclick="saveOrder()">Save order</button>
+
+    <div id="orderMessageWrap" style="display:none; margin-top:10px">
+      <button class="btn secondary" onclick="messageCustomerAboutOrder()">Message customer</button>
+    </div>
+
+    <div id="orderDeleteWrap" style="display:none; margin-top:10px">
+      <button class="btn danger" onclick="deleteOrder()">Delete this order</button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ORDERS -->
+<section id="orders" class="screen">
+
+  <button class="back" onclick="show('home')">‹ Home</button>
+
+  <div class="top">
+    <h2>Orders</h2>
+    <button onclick="newOrder()">＋</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Earned (done orders)</div>
+      <div class="value" id="statEarned">—</div>
+    </div>
+    <div class="stat">
+      <div class="label">Still owed to you</div>
+      <div class="value" id="statOwed">—</div>
+    </div>
+  </div>
+
+  <div class="chips" id="orderFilterChips"></div>
+
+  <div id="ordersList"></div>
+
+  <button class="fab" onclick="newOrder()">＋</button>
+
+</section>
+
+
+<!-- SETTINGS -->
+<section id="settings" class="screen">
+
+  <button class="back" onclick="show('home')">‹ Home</button>
+
+  <h2>Shop settings</h2>
+
+  <div class="form">
+
+    <label>SHOP NAME</label>
+    <input id="settingsShopName" placeholder="e.g. TailorPro">
+
+    <label>CURRENCY LABEL</label>
+    <input id="settingsCurrency" placeholder="e.g. TSh">
+
+    <br>
+
+    <button class="btn" onclick="saveSettings()">Save settings</button>
+
+  </div>
+
+  <h2 style="margin-top:34px">Backup</h2>
+  <p class="muted" id="backupStatus" style="margin-top:-10px; margin-bottom:12px"></p>
+
+  <button class="btn" onclick="exportBackup()">Save backup file</button>
+
+  <button class="btn secondary" style="margin-top:10px" onclick="restoreFileInput.click()">Restore from backup</button>
+  <input id="restoreFileInput" type="file" accept=".json,application/json" style="display:none" onchange="handleRestoreFile(event)">
+
+  <div id="settingsInstallWrap" style="margin-top:26px">
+    <button class="btn secondary" onclick="showInstallHelp()">Install on this phone</button>
+  </div>
+
+  <p class="muted" style="text-align:center; margin-top:30px">TailorPro · from Anwar Freedom</p>
+
+</section>
+
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <button id="navHome" class="active" onclick="show('home')">⌂<br>Home</button>
+  <button id="navCustomers" onclick="show('customers')">👤<br>Customers</button>
+  <button id="navOrders" onclick="show('orders')">📦<br>Orders</button>
+  <button onclick="newCustomer()">＋<br>New</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+</div>
+
+
+<script>
+
+/* -----------------------------
+   STORAGE (lives on this phone: IndexedDB, with localStorage as a fallback)
+----------------------------- */
+
+const STORAGE_KEY = "database";
+const IDB_NAME = "tailorpro";
+const IDB_STORE = "kv";
+
+let idbPromise = null;
+
+function openIDB() {
+
+  if (idbPromise) return idbPromise;
+
+  idbPromise = new Promise((resolve, reject) => {
+
+    if (!window.indexedDB) {
+      reject(new Error("IndexedDB not available"));
+      return;
+    }
+
+    const req = indexedDB.open(IDB_NAME, 1);
+
+    req.onupgradeneeded = () => req.result.createObjectStore(IDB_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+
+  });
+
+  return idbPromise;
+
+}
+
+async function storageGet(key) {
+
+  try {
+
+    const db = await openIDB();
+
+    return await new Promise((resolve, reject) => {
+      const req = db.transaction(IDB_STORE).objectStore(IDB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result === undefined ? null : req.result);
+      req.onerror = () => reject(req.error);
+    });
+
+  } catch (err) {
+
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+
+  }
+
+}
+
+async function storageSet(key, value) {
+
+  try {
+
+    const db = await openIDB();
+
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, "readwrite");
+      tx.objectStore(IDB_STORE).put(value, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+
+    return true;
+
+  } catch (err) {
+
+    try { localStorage.setItem(key, value); return true; } catch (e) { return false; }
+
+  }
+
+}
+
+
+/* -----------------------------
+   DATABASE
+----------------------------- */
+
+let database = {
+  shop: { name: "TailorPro", currency: "TSh" },
+  customers: [],
+  orders: [],
+  meta: { lastBackup: null, installDismissed: false }
+};
+
+let currentCustomer = null;
+let editingCustomerId = null;
+let editingOrderId = null;
+let currentMeasurementType = "suit";
+let currentOrderFilter = "All";
+let dbReady = false;
+let selectedPhotoData = null;
+let selectedCustomerPhotoData = null;
+
+const MEASUREMENT_TYPES = [
+  ["suit", "Suit"],
+  ["shirt", "Shirt"],
+  ["trouser", "Trouser"],
+  ["kanzu", "Kanzu"]
+];
+
+const ORDER_FILTERS = ["All", "In progress", "Ready for fitting", "Done"];
+const STAGES = ["Cutting", "Sewing", "Fitting", "Ready"];
+
+
+async function loadDatabase() {
+
+  const raw = await storageGet(STORAGE_KEY);
+
+  if (raw) {
+
+    try {
+
+      applyLoadedData(JSON.parse(raw));
+
+    } catch (err) {
+
+      // Saved data couldn't be read. Keep a copy so nothing is lost, then start fresh.
+      await storageSet(STORAGE_KEY + "_unreadable_copy", raw);
+
+    }
+
+  }
+
+  dbReady = true;
+
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().catch(() => {});
+  }
+
+  applyShopBranding();
+
+  document.getElementById("loading").classList.remove("active");
+  show("home");
+
+}
+
+
+function applyLoadedData(loaded) {
+
+  database.shop = loaded.shop || database.shop;
+  database.customers = Array.isArray(loaded.customers) ? loaded.customers : [];
+  database.orders = Array.isArray(loaded.orders) ? loaded.orders : [];
+  database.meta = Object.assign({ lastBackup: null, installDismissed: false }, loaded.meta || {});
+
+}
+
+async function saveDatabase() {
+
+  const ok = await storageSet(STORAGE_KEY, JSON.stringify(database));
+
+  if (!ok) showToast("Couldn't save — phone storage may be full");
+
+}
+
+
+function applyShopBranding() {
+
+  const name = database.shop.name || "TailorPro";
+  const currency = database.shop.currency || "TSh";
+
+  document.getElementById("homeEyebrow").textContent = name.toUpperCase();
+
+  document.querySelectorAll(".curr").forEach(el => el.textContent = currency);
+
+  renderCoverPhoto();
+
+}
+
+function renderCoverPhoto() {
+
+  const cover = document.getElementById("homeCover");
+  const photo = database.shop.coverPhoto;
+
+  if (photo) {
+
+    cover.classList.remove("empty");
+    cover.style.backgroundImage = `url('${photo}')`;
+    cover.innerHTML = `<div class="cover-edit-badge">📷</div>`;
+
+  } else {
+
+    cover.classList.add("empty");
+    cover.style.backgroundImage = "none";
+    cover.innerHTML = `
+      <div style="font-size:24px">🖼️</div>
+      <div style="font-size:12px; margin-top:6px">Add a cover photo for your shop</div>
+    `;
+
+  }
+
+}
+
+async function handleCoverPhotoSelect(event) {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  readAndCompressImage(file, 900, 0.65, async dataUrl => {
+
+    database.shop.coverPhoto = dataUrl;
+
+    await saveDatabase();
+    renderCoverPhoto();
+    showToast("Cover photo updated");
+
+  });
+
+}
+
+
+/* -----------------------------
+   TOAST
+----------------------------- */
+
+let toastTimer = null;
+
+function showToast(message) {
+
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+
+}
+
+
+/* -----------------------------
+   MODAL (replaces alert / confirm / prompt,
+   which don't reliably show inside this app's window)
+----------------------------- */
+
+function closeModal() {
+
+  document.getElementById("modalOverlay").classList.remove("show");
+
+}
+
+function openModalHtml(html) {
+
+  document.getElementById("modalBox").innerHTML = html;
+  document.getElementById("modalOverlay").classList.add("show");
+
+}
+
+function showAlert(message) {
+
+  openModalHtml(`
+    <p>${escapeHtml(message)}</p>
+    <button class="btn" style="margin-top:14px" onclick="closeModal()">OK</button>
+  `);
+
+}
+
+function showConfirm(message, onYes, yesLabel = "Yes, remove") {
+
+  openModalHtml(`
+    <p>${escapeHtml(message)}</p>
+    <div style="display:flex; gap:10px; margin-top:14px">
+      <button class="btn secondary" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn danger" style="flex:1" id="confirmYesBtn">${escapeHtml(yesLabel)}</button>
+    </div>
+  `);
+
+  document.getElementById("confirmYesBtn").onclick = () => {
+    closeModal();
+    onYes();
+  };
+
+}
+
+function openNotesModal() {
+
+  const customer = database.customers.find(c => c.id === currentCustomer);
+  if (!customer) return;
+
+  openModalHtml(`
+    <p><b>Notes for ${escapeHtml(customer.name)}</b></p>
+    <textarea id="notesModalInput" style="width:100%; min-height:110px; margin-top:10px; padding:13px; border:1px solid #ddd; border-radius:11px; font-size:16px; font-family:inherit">${escapeHtml(customer.notes || "")}</textarea>
+    <div style="display:flex; gap:10px; margin-top:14px">
+      <button class="btn secondary" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn" style="flex:1" onclick="saveNotesFromModal()">Save</button>
+    </div>
+  `);
+
+}
+
+async function saveNotesFromModal() {
+
+  const customer = database.customers.find(c => c.id === currentCustomer);
+  if (!customer) return;
+
+  customer.notes = document.getElementById("notesModalInput").value.trim();
+
+  await saveDatabase();
+  closeModal();
+  showToast("Notes saved");
+  openProfile(currentCustomer);
+
+}
+
+
+/* -----------------------------
+   NAVIGATION
+----------------------------- */
+
+function show(screen) {
+
+  if (!dbReady && screen !== "loading") return;
+
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(screen).classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+
+  if (screen === "home") navHome.classList.add("active");
+
+  if (["customers", "profile", "measurements", "newCustomer"].includes(screen)) {
+    navCustomers.classList.add("active");
+  }
+
+  if (["orders", "newOrder"].includes(screen)) {
+    navOrders.classList.add("active");
+  }
+
+  if (screen === "customers") renderCustomers(customerSearch.value);
+  if (screen === "orders") renderOrders();
+
+  if (screen === "home") {
+    renderInstallNudge();
+    renderBackupNudge();
+  }
+
+  if (screen === "settings") {
+    settingsShopName.value = database.shop.name || "";
+    settingsCurrency.value = database.shop.currency || "TSh";
+    renderBackupStatus();
+    settingsInstallWrap.style.display = isStandalone() ? "none" : "block";
+  }
+
+}
+
+
+/* -----------------------------
+   SETTINGS
+----------------------------- */
+
+async function saveSettings() {
+
+  const name = settingsShopName.value.trim() || "TailorPro";
+  const currency = settingsCurrency.value.trim() || "TSh";
+
+  database.shop = { name, currency };
+
+  await saveDatabase();
+  applyShopBranding();
+  showToast("Settings saved");
+  show("home");
+
+}
+
+
+/* -----------------------------
+   IMAGE HELPER (shared by customer photo + order photo)
+----------------------------- */
+
+function readAndCompressImage(file, maxWidth, quality, callback) {
+
+  const reader = new FileReader();
+
+  reader.onload = e => {
+
+    const img = new Image();
+
+    img.onload = () => {
+
+      const scale = Math.min(1, maxWidth / img.width);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      callback(canvas.toDataURL("image/jpeg", quality));
+
+    };
+
+    img.src = e.target.result;
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+
+/* -----------------------------
+   NEW / EDIT CUSTOMER
+----------------------------- */
+
+function newCustomer() {
+
+  editingCustomerId = null;
+  selectedCustomerPhotoData = null;
+
+  customerFormTitle.textContent = "New customer";
+  customerSaveBtn.textContent = "Save customer";
+
+  newName.value = "";
+  newPhone.value = "";
+  newLocation.value = "";
+  newNotes.value = "";
+  newVip.checked = false;
+
+  customerPhotoPicker.innerHTML = `📷<span>Add Photo</span>`;
+
+  show("newCustomer");
+
+}
+
+function editCustomer(id) {
+
+  const customer = database.customers.find(c => c.id === id);
+  if (!customer) return;
+
+  editingCustomerId = id;
+  selectedCustomerPhotoData = customer.photo || null;
+
+  customerFormTitle.textContent = "Edit customer";
+  customerSaveBtn.textContent = "Save changes";
+
+  newName.value = customer.name;
+  newPhone.value = customer.phone;
+  newLocation.value = customer.location || "";
+  newNotes.value = customer.notes || "";
+  newVip.checked = !!customer.vip;
+
+  customerPhotoPicker.innerHTML = customer.photo
+    ? `<img src="${customer.photo}">`
+    : `📷<span>Add Photo</span>`;
+
+  show("newCustomer");
+
+}
+
+function handleCustomerPhotoSelect(event) {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  readAndCompressImage(file, 400, 0.7, dataUrl => {
+
+    selectedCustomerPhotoData = dataUrl;
+    customerPhotoPicker.innerHTML = `<img src="${dataUrl}">`;
+
+  });
+
+}
+
+function cancelCustomerForm() {
+
+  if (editingCustomerId) {
+    openProfile(editingCustomerId);
+  } else {
+    show("customers");
+  }
+
+}
+
+async function saveCustomer() {
+
+  const name = newName.value.trim();
+  const phone = newPhone.value.trim();
+
+  if (!name || !phone) {
+    showAlert("Please enter the customer's name and phone number.");
+    return;
+  }
+
+  if (editingCustomerId) {
+
+    const customer = database.customers.find(c => c.id === editingCustomerId);
+
+    customer.name = name;
+    customer.phone = phone;
+    customer.location = newLocation.value.trim();
+    customer.notes = newNotes.value.trim();
+    customer.vip = newVip.checked;
+    customer.photo = selectedCustomerPhotoData;
+
+    await saveDatabase();
+    showToast("Customer updated");
+    openProfile(customer.id);
+
+  } else {
+
+    const customer = {
+      id: Date.now().toString(),
+      name,
+      phone,
+      location: newLocation.value.trim(),
+      notes: newNotes.value.trim(),
+      vip: newVip.checked,
+      photo: selectedCustomerPhotoData,
+      measurements: {}
+    };
+
+    database.customers.unshift(customer);
+
+    await saveDatabase();
+    showToast("Customer saved");
+    openProfile(customer.id);
+
+  }
+
+}
+
+function deleteCustomer(id) {
+
+  showConfirm("Remove this customer and their orders? This cannot be undone.", async () => {
+
+    database.customers = database.customers.filter(c => c.id !== id);
+    database.orders = database.orders.filter(o => o.customerId !== id);
+
+    await saveDatabase();
+    showToast("Customer removed");
+    show("customers");
+
+  });
+
+}
+
+
+/* -----------------------------
+   SEARCH
+----------------------------- */
+
+function searchFromHome(value) {
+
+  if (!value.trim()) return;
+
+  customerSearch.value = value;
+  show("customers");
+
+}
+
+
+/* -----------------------------
+   CUSTOMER LIST
+----------------------------- */
+
+function renderCustomers(search = "") {
+
+  const term = search.toLowerCase();
+
+  const customers = database.customers.filter(customer =>
+    (customer.name + " " + customer.phone).toLowerCase().includes(term)
+  );
+
+  if (!customers.length) {
+    customerList.innerHTML = `<div class="empty">No customers found.<br><br>Tap ＋ to add one.</div>`;
+    return;
+  }
+
+  customerList.innerHTML = customers.map(customer => {
+
+    const orderCount = database.orders.filter(o => o.customerId === customer.id).length;
+    const lastMeasurement = customer.lastMeasurementDate;
+
+    return `
+      <div class="customer" onclick="openProfile('${customer.id}')">
+        <div class="avatar">${avatarInner(customer)}</div>
+        <div class="customer-info">
+          <div class="name">${escapeHtml(customer.name)}${customer.vip ? '<span class="vip-pill">VIP</span>' : ""}</div>
+          <div class="meta">📦 ${orderCount} order${orderCount === 1 ? "" : "s"}${lastMeasurement ? " · 📏 " + escapeHtml(lastMeasurement) : ""}</div>
+        </div>
+        ›
+      </div>
+    `;
+
+  }).join("");
+
+}
+
+
+/* -----------------------------
+   HELPERS
+----------------------------- */
+
+function initials(name) {
+
+  return name.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+
+}
+
+function avatarInner(customer) {
+
+  return customer.photo
+    ? `<img src="${customer.photo}">`
+    : initials(customer.name);
+
+}
+
+function escapeHtml(value) {
+
+  const div = document.createElement("div");
+  div.textContent = value ?? "";
+  return div.innerHTML;
+
+}
+
+function money(value) {
+
+  return (database.shop.currency || "TSh") + " " + Number(value || 0).toLocaleString();
+
+}
+
+function garmentIcon(name) {
+
+  const n = (name || "").toLowerCase();
+
+  if (n.includes("suit") || n.includes("jacket") || n.includes("blazer")) return "🧥";
+  if (n.includes("shirt")) return "👕";
+  if (n.includes("trouser") || n.includes("pant")) return "👖";
+  if (n.includes("dress") || n.includes("gown")) return "👗";
+  if (n.includes("kanzu")) return "🥻";
+
+  return "🧵";
+
+}
+
+function formatOrderDate(order) {
+
+  if (!order.createdAt) return "—";
+
+  return new Date(order.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+}
+
+function stageProgress(status) {
+
+  if (status === "Done") return { doneUpTo: 3, current: -1 };
+  if (status === "Ready for fitting") return { doneUpTo: 1, current: 2 };
+
+  return { doneUpTo: 0, current: 1 };
+
+}
+
+function renderStageTracker(status) {
+
+  const { doneUpTo, current } = stageProgress(status);
+
+  return `
+    <div class="stage-tracker">
+      ${STAGES.map((label, i) => {
+        const cls = i <= doneUpTo ? "done" : i === current ? "current" : "";
+        return `<div class="stage ${cls}"><div class="stage-dot"></div>${label}</div>`;
+      }).join("")}
+    </div>
+  `;
+
+}
+
+
+/* -----------------------------
+   CUSTOMER PROFILE
+----------------------------- */
+
+function openProfile(id) {
+
+  currentCustomer = id;
+
+  const customer = database.customers.find(c => c.id === id);
+  if (!customer) return;
+
+  const orders = database.orders.filter(o => o.customerId === id);
+
+  const totalSpent = orders.reduce((sum, o) => sum + Number(o.price || 0), 0);
+  const outstanding = orders.reduce((sum, o) => sum + Math.max(0, Number(o.price || 0) - Number(o.paid || 0)), 0);
+
+  const lastOrder = orders.slice().sort((a, b) => Number(b.id) - Number(a.id))[0];
+  const lastOrderDate = lastOrder ? formatOrderDate(lastOrder) : "—";
+
+  const phoneDigits = customer.phone.replace(/\D/g, "");
+
+  profileContent.innerHTML = `
+
+    <div class="profile">
+      <div class="avatar">${avatarInner(customer)}</div>
+      <h2>${escapeHtml(customer.name)}${customer.vip ? '<span class="vip-pill">VIP</span>' : ""}</h2>
+      <div class="muted">
+        ${escapeHtml(customer.phone)}
+        ${customer.location ? " · " + escapeHtml(customer.location) : ""}
+      </div>
+    </div>
+
+    <div class="quick">
+      <a class="quickcell" href="tel:${escapeHtml(customer.phone)}">
+        <div class="quick-icon green">☎</div>Call
+      </a>
+      <a class="quickcell" href="https://wa.me/${phoneDigits}" target="_blank" rel="noopener">
+        <div class="quick-icon green">◉</div>WhatsApp
+      </a>
+      <button class="quickcell" onclick="openNotesModal()">
+        <div class="quick-icon grey">✎</div>Notes
+      </button>
+    </div>
+
+    <div class="tabs">
+      <button class="active">Overview</button>
+      <button onclick="openMeasurements()">Measurements</button>
+      <button onclick="show('orders')">Orders</button>
+      <button onclick="openNotesModal()">Notes</button>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <span class="row-icon">📦</span>
+        <span class="row-label">Total Orders</span>
+        <b>${orders.length}</b>
+      </div>
+      <div class="row">
+        <span class="row-icon">💰</span>
+        <span class="row-label">Total Spent</span>
+        <b>${money(totalSpent)}</b>
+      </div>
+      <div class="row">
+        <span class="row-icon">⚠️</span>
+        <span class="row-label">Outstanding Balance</span>
+        <b class="${outstanding > 0 ? "danger-text" : ""}">${money(outstanding)}</b>
+      </div>
+      <div class="row" style="border-bottom:none">
+        <span class="row-icon">📅</span>
+        <span class="row-label">Last Order</span>
+        <b>${lastOrderDate}</b>
+      </div>
+    </div>
+
+    <div style="margin:20px 0">
+      <b>Notes</b>
+      <p class="muted">${customer.notes ? escapeHtml(customer.notes) : "No notes yet. Tap Notes above to add some."}</p>
+    </div>
+
+    <button class="btn" onclick="openMeasurements()" style="margin-bottom:10px">View measurements</button>
+    <button class="btn secondary" onclick="newOrderForCustomer('${customer.id}')" style="margin-bottom:10px">New order for ${escapeHtml(customer.name)}</button>
+    <button class="btn secondary" onclick="editCustomer('${customer.id}')" style="margin-bottom:10px">Edit customer</button>
+    <button class="btn danger" onclick="deleteCustomer('${customer.id}')">Remove customer</button>
+
+  `;
+
+  show("profile");
+
+}
+
+
+/* -----------------------------
+   MEASUREMENTS
+----------------------------- */
+
+function openMeasurements(type) {
+
+  if (type) currentMeasurementType = type;
+
+  measurementChips.innerHTML = MEASUREMENT_TYPES.map(([key, label]) => `
+    <button class="chip ${key === currentMeasurementType ? "active" : ""}" onclick="openMeasurements('${key}')">${label}</button>
+  `).join("");
+
+  const customer = database.customers.find(c => c.id === currentCustomer);
+  const m = (customer.measurements && customer.measurements[currentMeasurementType]) || {};
+
+  const fields = [
+    ["height", "Height"], ["shoulder", "Shoulder"], ["chest", "Chest"],
+    ["waist", "Waist"], ["hip", "Hip"], ["neck", "Neck"],
+    ["sleeve", "Sleeve length"], ["jacket", "Jacket length"],
+    ["trouserWaist", "Trouser waist"], ["trouserLength", "Trouser length"],
+    ["thigh", "Thigh"], ["knee", "Knee"], ["crotch", "Crotch"]
+  ];
+
+  measurementForm.innerHTML = `
+    <div class="form">
+
+      <label>DATE</label>
+      <input id="measurementDate" value="${m.date || new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}">
+
+      <div class="measurements">
+        ${fields.map(field => `
+          <div>
+            <label>${field[1].toUpperCase()} (CM)</label>
+            <input id="m_${field[0]}" value="${m[field[0]] || ""}">
+          </div>
+        `).join("")}
+      </div>
+
+      <br>
+
+      <button class="btn" onclick="saveMeasurements()">Save measurements</button>
+
+      <button class="btn secondary" style="margin-top:10px" onclick="shareMeasurements()">Share on WhatsApp</button>
+
+    </div>
+  `;
+
+  show("measurements");
+
+}
+
+async function saveMeasurements() {
+
+  const customer = database.customers.find(c => c.id === currentCustomer);
+
+  const fields = [
+    "height", "shoulder", "chest", "waist", "hip", "neck", "sleeve",
+    "jacket", "trouserWaist", "trouserLength", "thigh", "knee", "crotch"
+  ];
+
+  const measurements = { date: measurementDate.value };
+
+  fields.forEach(field => {
+    measurements[field] = document.getElementById("m_" + field).value;
+  });
+
+  if (!customer.measurements) customer.measurements = {};
+  customer.measurements[currentMeasurementType] = measurements;
+  customer.lastMeasurementDate = measurements.date;
+
+  await saveDatabase();
+  showToast("Measurements saved");
+  openProfile(currentCustomer);
+
+}
+
+function shareMeasurements() {
+
+  const customer = database.customers.find(c => c.id === currentCustomer);
+  const m = (customer.measurements && customer.measurements[currentMeasurementType]) || {};
+
+  const typeLabel = MEASUREMENT_TYPES.find(([key]) => key === currentMeasurementType)[1];
+
+  const labels = {
+    height: "Height", shoulder: "Shoulder", chest: "Chest", waist: "Waist",
+    hip: "Hip", neck: "Neck", sleeve: "Sleeve length", jacket: "Jacket length",
+    trouserWaist: "Trouser waist", trouserLength: "Trouser length",
+    thigh: "Thigh", knee: "Knee", crotch: "Crotch"
+  };
+
+  let text = `${typeLabel} measurements for ${customer.name} (${m.date || ""}):\n`;
+
+  Object.keys(labels).forEach(key => {
+    if (m[key]) text += `${labels[key]}: ${m[key]} cm\n`;
+  });
+
+  const phoneDigits = customer.phone.replace(/\D/g, "");
+
+  window.open(`https://wa.me/${phoneDigits}?text=${encodeURIComponent(text)}`, "_blank");
+
+}
+
+
+/* -----------------------------
+   NEW / EDIT ORDER
+----------------------------- */
+
+function newOrder() {
+
+  if (!database.customers.length) {
+    showAlert("Add a customer first, then create an order for them.");
+    show("newCustomer");
+    return;
+  }
+
+  editingOrderId = null;
+  selectedPhotoData = null;
+
+  orderFormTitle.textContent = "New order";
+  orderDeleteWrap.style.display = "none";
+  orderMessageWrap.style.display = "none";
+  orderContextHeader.innerHTML = "";
+
+  orderCustomer.innerHTML = database.customers.map(c =>
+    `<option value="${c.id}">${escapeHtml(c.name)}</option>`
+  ).join("");
+  orderCustomer.disabled = false;
+
+  orderGarment.value = "";
+  orderPrice.value = "";
+  orderPaid.value = "";
+  orderDue.value = "";
+  orderStatus.value = "In progress";
+  orderPhotoInput.value = "";
+  orderPhotoPreview.style.display = "none";
+
+  newOrderBack.onclick = () => show("orders");
+
+  show("newOrder");
+
+}
+
+function newOrderForCustomer(customerId) {
+
+  newOrder();
+  orderCustomer.value = customerId;
+  newOrderBack.onclick = () => openProfile(customerId);
+
+}
+
+function openOrder(orderId) {
+
+  const order = database.orders.find(o => o.id === orderId);
+  if (!order) return;
+
+  editingOrderId = orderId;
+  selectedPhotoData = order.photo || null;
+
+  orderFormTitle.textContent = "Order details";
+  orderDeleteWrap.style.display = "block";
+  orderMessageWrap.style.display = "block";
+
+  const balance = Number(order.price || 0) - Number(order.paid || 0);
+
+  orderContextHeader.innerHTML = `
+    <div class="context-card">
+      <div class="stats">
+        <div class="stat">
+          <div class="label">Deposit paid</div>
+          <div class="value">${money(order.paid)}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Balance</div>
+          <div class="value" style="${balance > 0 ? "color:var(--danger)" : ""}">${money(balance)}</div>
+        </div>
+      </div>
+      ${renderStageTracker(order.status)}
+    </div>
+  `;
+
+  orderCustomer.innerHTML = database.customers.map(c =>
+    `<option value="${c.id}">${escapeHtml(c.name)}</option>`
+  ).join("");
+  orderCustomer.value = order.customerId;
+
+  orderGarment.value = order.garment;
+  orderPrice.value = order.price || "";
+  orderPaid.value = order.paid || "";
+  orderDue.value = order.dueDate || "";
+  orderStatus.value = order.status;
+
+  if (order.photo) {
+    orderPhotoPreview.src = order.photo;
+    orderPhotoPreview.style.display = "block";
+  } else {
+    orderPhotoPreview.style.display = "none";
+  }
+
+  newOrderBack.onclick = () => show("orders");
+
+  show("newOrder");
+
+}
+
+function handlePhotoSelect(event) {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  readAndCompressImage(file, 700, 0.6, dataUrl => {
+
+    selectedPhotoData = dataUrl;
+    orderPhotoPreview.src = dataUrl;
+    orderPhotoPreview.style.display = "block";
+
+  });
+
+}
+
+function messageCustomerAboutOrder() {
+
+  const order = database.orders.find(o => o.id === editingOrderId);
+  const customer = database.customers.find(c => c.id === order.customerId);
+  if (!customer) return;
+
+  const balance = Number(order.price || 0) - Number(order.paid || 0);
+
+  let text = `Hi ${customer.name}, an update on your ${order.garment}: status is "${order.status}".`;
+  if (balance > 0) text += ` Balance remaining: ${money(balance)}.`;
+
+  const phoneDigits = customer.phone.replace(/\D/g, "");
+
+  window.open(`https://wa.me/${phoneDigits}?text=${encodeURIComponent(text)}`, "_blank");
+
+}
+
+async function saveOrder() {
+
+  const customerId = orderCustomer.value;
+  const garment = orderGarment.value.trim();
+
+  if (!customerId || !garment) {
+    showAlert("Please choose a customer and enter the garment.");
+    return;
+  }
+
+  const orderData = {
+    customerId,
+    garment,
+    price: Number(orderPrice.value) || 0,
+    paid: Number(orderPaid.value) || 0,
+    dueDate: orderDue.value || "",
+    status: orderStatus.value,
+    photo: selectedPhotoData || null
+  };
+
+  if (editingOrderId) {
+
+    const order = database.orders.find(o => o.id === editingOrderId);
+    Object.assign(order, orderData);
+
+    await saveDatabase();
+    showToast("Order updated");
+
+  } else {
+
+    database.orders.unshift({ id: Date.now().toString(), createdAt: new Date().toISOString(), ...orderData });
+
+    await saveDatabase();
+    showToast("Order saved");
+
+  }
+
+  show("orders");
+
+}
+
+function deleteOrder() {
+
+  showConfirm("Remove this order? This cannot be undone.", async () => {
+
+    database.orders = database.orders.filter(o => o.id !== editingOrderId);
+
+    await saveDatabase();
+    showToast("Order removed");
+    show("orders");
+
+  });
+
+}
+
+
+/* -----------------------------
+   ORDERS LIST
+----------------------------- */
+
+function renderOrders() {
+
+  orderFilterChips.innerHTML = ORDER_FILTERS.map(f => `
+    <button class="chip ${f === currentOrderFilter ? "active" : ""}" onclick="setOrderFilter('${f}')">${f}</button>
+  `).join("");
+
+  const earned = database.orders
+    .filter(o => o.status === "Done")
+    .reduce((sum, o) => sum + Number(o.price || 0), 0);
+
+  const owed = database.orders
+    .reduce((sum, o) => sum + Math.max(0, Number(o.price || 0) - Number(o.paid || 0)), 0);
+
+  statEarned.textContent = money(earned);
+  statOwed.textContent = money(owed);
+
+  const filtered = currentOrderFilter === "All"
+    ? database.orders
+    : database.orders.filter(o => o.status === currentOrderFilter);
+
+  if (!filtered.length) {
+    ordersList.innerHTML = `<div class="empty">No orders here yet.<br><br>Tap ＋ to add one.</div>`;
+    return;
+  }
+
+  const statusClass = status => status === "Done" ? "done" : status === "In progress" ? "progress" : "ready";
+
+  ordersList.innerHTML = filtered.map(order => {
+
+    const customer = database.customers.find(c => c.id === order.customerId);
+    const balance = Number(order.price || 0) - Number(order.paid || 0);
+
+    return `
+      <div class="card order-card" onclick="openOrder('${order.id}')">
+        <div class="order-thumb">${order.photo ? `<img src="${order.photo}">` : garmentIcon(order.garment)}</div>
+        <div class="order-body">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start">
+            <b>${escapeHtml(order.garment)}</b>
+            <span class="status-pill ${statusClass(order.status)}">${escapeHtml(order.status)}</span>
+          </div>
+          <p class="muted" style="margin:4px 0 8px">${customer ? escapeHtml(customer.name) : "Unknown customer"} · ${money(order.price)}${order.dueDate ? " · due " + order.dueDate : ""}</p>
+          ${balance > 0 ? `<p class="muted" style="color:var(--danger); margin:0 0 6px">Balance owed: ${money(balance)}</p>` : ""}
+          ${renderStageTracker(order.status)}
+        </div>
+      </div>
+    `;
+
+  }).join("");
+
+}
+
+function setOrderFilter(filter) {
+
+  currentOrderFilter = filter;
+  renderOrders();
+
+}
+
+
+/* -----------------------------
+   BACKUP & RESTORE
+----------------------------- */
+
+function formatDay(iso) {
+
+  return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+}
+
+function daysSince(iso) {
+
+  return (Date.now() - new Date(iso).getTime()) / 86400000;
+
+}
+
+function renderBackupStatus() {
+
+  const last = database.meta.lastBackup;
+
+  backupStatus.textContent = last
+    ? "Last backup: " + formatDay(last) + ". Your data lives on this phone only, so save a backup often."
+    : "No backup yet. Your data lives on this phone only, so save a backup often.";
+
+}
+
+function renderBackupNudge() {
+
+  const needs = database.customers.length > 0 &&
+    (!database.meta.lastBackup || daysSince(database.meta.lastBackup) > 7);
+
+  backupNudge.innerHTML = needs ? `
+    <div class="nudge">
+      <div style="font-size:22px">💾</div>
+      <div class="nudge-text"><b>Back up your customers</b>Keep a copy safe in case you lose this phone.</div>
+      <button onclick="show('settings')">Back up</button>
+    </div>
+  ` : "";
+
+}
+
+async function markBackupDone() {
+
+  database.meta.lastBackup = new Date().toISOString();
+
+  await saveDatabase();
+  renderBackupStatus();
+  showToast("Backup saved");
+
+}
+
+async function exportBackup() {
+
+  const stamp = new Date().toISOString().slice(0, 10);
+  const fileName = "tailorpro-backup-" + stamp + ".json";
+
+  const payload = JSON.stringify({
+    app: "TailorPro",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data: database
+  });
+
+  const file = new File([payload], fileName, { type: "application/json" });
+
+  // Best on phones: the share sheet (save to Files, send on WhatsApp, etc.)
+  try {
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+
+      await navigator.share({ files: [file], title: "TailorPro backup" });
+      await markBackupDone();
+      return;
+
+    }
+
+  } catch (err) {
+
+    if (err && err.name === "AbortError") return;
+
+  }
+
+  // Fallback: normal file download
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+  await markBackupDone();
+
+}
+
+function handleRestoreFile(event) {
+
+  const file = event.target.files[0];
+  event.target.value = "";
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(reader.result);
+    } catch (err) {
+      parsed = null;
+    }
+
+    const data = parsed && parsed.data;
+
+    if (!data || !Array.isArray(data.customers) || !Array.isArray(data.orders)) {
+      showAlert("This file is not a TailorPro backup.");
+      return;
+    }
+
+    showConfirm(
+      `Replace everything on this phone with this backup (${data.customers.length} customers, ${data.orders.length} orders)? What is on this phone now will be lost.`,
+      async () => {
+
+        applyLoadedData(data);
+
+        await saveDatabase();
+        applyShopBranding();
+        showToast("Backup restored");
+        show("home");
+
+      },
+      "Yes, restore"
+    );
+
+  };
+
+  reader.readAsText(file);
+
+}
+
+
+/* -----------------------------
+   INSTALL AS AN APP
+----------------------------- */
+
+let deferredInstallPrompt = null;
+
+window.addEventListener("beforeinstallprompt", event => {
+
+  event.preventDefault();
+  deferredInstallPrompt = event;
+
+  if (dbReady) renderInstallNudge();
+
+});
+
+function isStandalone() {
+
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+
+}
+
+function isIOS() {
+
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+}
+
+function isMobile() {
+
+  return isIOS() || /android/i.test(navigator.userAgent);
+
+}
+
+function renderInstallNudge() {
+
+  const shouldShow = isMobile() && !isStandalone() && !database.meta.installDismissed;
+
+  installNudge.innerHTML = shouldShow ? `
+    <div class="nudge">
+      <div style="font-size:22px">📲</div>
+      <div class="nudge-text"><b>Install TailorPro</b>Put it on your home screen and use it like an app, even offline.</div>
+      <button onclick="showInstallHelp()">Install</button>
+      <button class="nudge-x" onclick="dismissInstallNudge()">✕</button>
+    </div>
+  ` : "";
+
+}
+
+async function dismissInstallNudge() {
+
+  database.meta.installDismissed = true;
+
+  await saveDatabase();
+  renderInstallNudge();
+
+}
+
+function showInstallHelp() {
+
+  if (deferredInstallPrompt) {
+
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.finally(() => { deferredInstallPrompt = null; renderInstallNudge(); });
+    return;
+
+  }
+
+  if (isIOS()) {
+
+    openModalHtml(`
+      <p><b>Install on iPhone</b></p>
+      <p style="margin-top:10px; line-height:1.6">
+        1. Open this page in <b>Safari</b><br>
+        2. Tap the <b>Share</b> button (square with an arrow)<br>
+        3. Tap <b>Add to Home Screen</b><br>
+        4. Tap <b>Add</b>
+      </p>
+      <p class="muted" style="margin-top:10px">Opened this from WhatsApp or Instagram? Tap the ⋯ or compass button and choose <b>Open in Safari</b> first.</p>
+      <button class="btn" style="margin-top:14px" onclick="closeModal()">Got it</button>
+    `);
+
+  } else {
+
+    openModalHtml(`
+      <p><b>Install on Android</b></p>
+      <p style="margin-top:10px; line-height:1.6">
+        1. Open this page in <b>Chrome</b><br>
+        2. Tap the <b>⋮</b> menu (top right)<br>
+        3. Tap <b>Install app</b> or <b>Add to Home screen</b>
+      </p>
+      <button class="btn" style="margin-top:14px" onclick="closeModal()">Got it</button>
+    `);
+
+  }
+
+}
+
+
+/* -----------------------------
+   OFFLINE SUPPORT
+----------------------------- */
+
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+
+}
+
+
+/* -----------------------------
+   START
+----------------------------- */
+
+setTimeout(() => {
+
+  document.getElementById("splash").classList.add("fade-out");
+  loadDatabase();
+
+}, 1600);
+
+</script>
+
+</body>
+</html>
