@@ -7,19 +7,23 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="TailorPro">
+<meta name="apple-mobile-web-app-title" content="Nyuzi House">
 <meta name="description" content="Customers, measurements and orders for tailors">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 
-<title>TailorPro</title>
+<title>Nyuzi House</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
+html {
+  --brand-blue: #2F6FED;
+}
+
 :root {
   --primary: #6C4CE0;
   --primary-dark: #5A3ED1;
@@ -591,6 +595,10 @@ button, a.btn, a.quickcell {
   margin-top: 4px;
 }
 
+.app.onboarding-active .nav {
+  display: none;
+}
+
 .nav {
   position: fixed;
   bottom: 0;
@@ -751,7 +759,20 @@ button, a.btn, a.quickcell {
   color: #999;
 }
 
+.stage.tappable {
+  cursor: pointer;
+  padding: 8px 0 4px;
+  margin-top: -8px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.stage.tappable:active .stage-dot {
+  transform: scale(1.35);
+}
+
 .stage-dot {
+  transition: transform 0.12s;
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -795,7 +816,7 @@ button, a.btn, a.quickcell {
   inset: 0;
   max-width: 430px;
   margin: auto;
-  background: #2F6FED;
+  background: var(--brand-blue);
   color: white;
   display: flex;
   flex-direction: column;
@@ -840,6 +861,143 @@ button, a.btn, a.quickcell {
   color: rgba(255,255,255,0.7);
 }
 
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.onboarding-screen {
+  position: fixed;
+  inset: 0;
+  max-width: 430px;
+  margin: auto;
+  background: var(--brand-blue);
+  color: white;
+  z-index: 90;
+  overflow-y: auto;
+  display: none;
+}
+
+#onboarding.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.onboarding-screen::before,
+.onboarding-screen::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  pointer-events: none;
+}
+
+.onboarding-screen::before {
+  width: 280px;
+  height: 280px;
+  top: -100px;
+  right: -90px;
+}
+
+.onboarding-screen::after {
+  width: 220px;
+  height: 220px;
+  bottom: -80px;
+  left: -70px;
+}
+
+.onboarding-inner {
+  position: relative;
+  z-index: 1;
+  padding: 40px 28px calc(40px + env(safe-area-inset-bottom));
+}
+
+.onboarding-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.16);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  margin: 0 auto 18px;
+  animation: riseIn 0.5s ease-out both;
+}
+
+.onboarding-title {
+  font-family: 'Fredoka', -apple-system, sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  margin: 0 0 8px;
+  animation: riseIn 0.5s ease-out 0.1s both;
+}
+
+.onboarding-sub {
+  text-align: center;
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+  margin: 0 0 28px;
+  animation: riseIn 0.5s ease-out 0.2s both;
+}
+
+.cover-glass {
+  width: 100%;
+  height: 120px;
+  border: 2px dashed rgba(255,255,255,0.45);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.08);
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 10px;
+  position: relative;
+  overflow: hidden;
+  animation: riseIn 0.5s ease-out 0.3s both;
+}
+
+.cover-glass.empty {
+  color: rgba(255,255,255,0.85);
+}
+
+.onboarding-field {
+  animation: riseIn 0.5s ease-out 0.4s both;
+}
+
+.onboarding-field label {
+  color: rgba(255,255,255,0.85);
+}
+
+.onboarding-field input {
+  border: none;
+}
+
+.onboarding-cta {
+  background: white;
+  color: var(--brand-blue);
+  margin-top: 24px;
+  animation: riseIn 0.5s ease-out 0.5s both;
+}
+
+.onboarding-skip {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.75);
+  font-size: 13px;
+  margin-top: 14px;
+  padding: 6px;
+  animation: riseIn 0.5s ease-out 0.6s both;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -859,7 +1017,103 @@ button, a.btn, a.quickcell {
   width: 100%;
   max-width: 430px;
   border-radius: 20px 20px 0 0;
-  padding: 22px 20px 34px;
+  padding: 22px 20px calc(34px + env(safe-area-inset-bottom));
+}
+
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-overlay.show {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-overlay.show .modal-box {
+  animation: sheetUp 0.3s ease-out;
+}
+
+.success-check {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--success-light);
+  color: var(--success);
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0 auto 12px;
+  animation: popIn 0.4s ease-out 0.15s both;
+}
+
+.avatar-btn {
+  position: relative;
+  display: block;
+  width: 78px;
+  height: 78px;
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.avatar-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid white;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+.photo-preview {
+  overflow: hidden;
+  margin: 14px auto 0;
+}
+
+.photo-preview.circle {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+}
+
+.photo-preview.wide {
+  width: 100%;
+  height: 130px;
+  border-radius: 18px;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.group-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 0;
 }
 
 .modal-box p {
@@ -879,7 +1133,7 @@ button, a.btn, a.quickcell {
   <h1 class="splash-title">HEY<br>TAILOR!</h1>
   <p class="splash-sub">it's time</p>
 
-  <div class="splash-credit">from Anwar Freedom</div>
+  <div class="splash-credit">from Nyuzi House</div>
 
 </div>
 
@@ -887,6 +1141,30 @@ button, a.btn, a.quickcell {
 <section id="loading" class="screen active">
   <div class="loading">Loading your workshop…</div>
 </section>
+
+<!-- ONBOARDING (first run only) -->
+<section id="onboarding" class="screen onboarding-screen">
+
+  <div class="onboarding-inner">
+
+    <div class="onboarding-badge">✂️</div>
+    <h1 class="onboarding-title">Let's set up<br>your shop</h1>
+    <p class="onboarding-sub">Takes less than a minute</p>
+
+    <button class="cover-glass" id="onboardCover" onclick="onboardCoverInput.click()"></button>
+    <input id="onboardCoverInput" type="file" accept="image/*" style="display:none" onchange="handleCoverPhotoSelect(event)">
+
+    <div class="form onboarding-field">
+      <label>SHOP NAME</label>
+      <input id="onboardShopName" placeholder="e.g. SARARA Tailoring">
+    </div>
+
+    <button class="btn onboarding-cta" onclick="saveOnboarding()">Get Started →</button>
+
+  </div>
+
+</section>
+
 
 <!-- HOME -->
 <section id="home" class="screen">
@@ -933,7 +1211,7 @@ button, a.btn, a.quickcell {
       <span>See your orders</span>
     </button>
 
-    <button class="card action" onclick="show('customers')">
+    <button class="card action" onclick="openCustomersFor('measurements')">
       📏
       <b>Measurements</b>
       <span>Find measurements</span>
@@ -951,9 +1229,11 @@ button, a.btn, a.quickcell {
 <section id="customers" class="screen">
 
   <div class="top">
-    <h2>Customers</h2>
+    <h2 id="customersTitle">Customers</h2>
     <button onclick="newCustomer()">＋</button>
   </div>
+
+  <p class="muted" id="customersHint" style="display:none; margin:-8px 0 0">Tap a customer to open their measurements.</p>
 
   <div class="search">
     🔍
@@ -977,6 +1257,8 @@ button, a.btn, a.quickcell {
   <button class="back" onclick="show('customers')">‹ Customers</button>
 
   <div id="profileContent"></div>
+
+  <input id="profilePhotoInput" type="file" accept="image/*" style="display:none" onchange="handleProfilePhotoSelect(event)">
 
 </section>
 
@@ -1020,12 +1302,39 @@ button, a.btn, a.quickcell {
     <label>LOCATION</label>
     <input id="newLocation" placeholder="Dar es Salaam">
 
+    <label>NUMBER OF ORDERS</label>
+    <input id="newOrderCount" inputmode="numeric" placeholder="0">
+    <div class="muted" style="margin-top:6px">Orders they made before. Orders you add in the app are counted on top automatically.</div>
+
     <label>NOTES</label>
     <textarea id="newNotes" placeholder="Useful things to remember..."></textarea>
 
     <div class="checkbox-row">
       <input type="checkbox" id="newVip">
       <label for="newVip">Mark as VIP customer</label>
+    </div>
+
+    <div id="firstOrderSection">
+
+      <div class="group-title">First order (optional)</div>
+
+      <label>GARMENT</label>
+      <input id="firstOrderGarment" placeholder="e.g. Two-piece suit">
+
+      <label>PRICE (<span class="curr">TSh</span>)</label>
+      <input id="firstOrderPrice" inputmode="numeric" placeholder="e.g. 350000">
+
+      <label>AMOUNT PAID SO FAR (<span class="curr">TSh</span>)</label>
+      <input id="firstOrderPaid" inputmode="numeric" placeholder="e.g. 100000">
+
+      <label>DUE DATE</label>
+      <input id="firstOrderDue" type="date">
+
+      <label>PHOTO (OPTIONAL)</label>
+      <input id="firstOrderPhotoInput" type="file" accept="image/*" onchange="handleFirstOrderPhotoSelect(event)">
+      <img id="firstOrderPhotoPreview" class="order-photo" style="display:none">
+      <button id="firstOrderPhotoRemove" class="btn secondary" style="display:none; margin-top:8px" onclick="clearFirstOrderPhoto()">Remove photo</button>
+
     </div>
 
     <br>
@@ -1063,16 +1372,18 @@ button, a.btn, a.quickcell {
     <label>DUE DATE</label>
     <input id="orderDue" type="date">
 
-    <label>STATUS</label>
-    <select id="orderStatus">
-      <option>In progress</option>
-      <option>Ready for fitting</option>
-      <option>Done</option>
+    <label>STAGE</label>
+    <select id="orderStageSelect">
+      <option value="0">Cutting</option>
+      <option value="1">Sewing</option>
+      <option value="2">Fitting</option>
+      <option value="3">Ready (done)</option>
     </select>
 
     <label>PHOTO (OPTIONAL)</label>
     <input id="orderPhotoInput" type="file" accept="image/*" onchange="handlePhotoSelect(event)">
     <img id="orderPhotoPreview" class="order-photo" style="display:none">
+    <button id="orderPhotoRemove" class="btn secondary" style="display:none; margin-top:8px" onclick="clearOrderPhoto()">Remove photo</button>
 
     <br><br>
 
@@ -1131,7 +1442,7 @@ button, a.btn, a.quickcell {
   <div class="form">
 
     <label>SHOP NAME</label>
-    <input id="settingsShopName" placeholder="e.g. TailorPro">
+    <input id="settingsShopName" placeholder="e.g. Nyuzi House">
 
     <label>CURRENCY LABEL</label>
     <input id="settingsCurrency" placeholder="e.g. TSh">
@@ -1154,7 +1465,7 @@ button, a.btn, a.quickcell {
     <button class="btn secondary" onclick="showInstallHelp()">Install on this phone</button>
   </div>
 
-  <p class="muted" style="text-align:center; margin-top:30px">TailorPro · from Anwar Freedom</p>
+  <p class="muted" style="text-align:center; margin-top:30px">from Nyuzi House</p>
 
 </section>
 
@@ -1261,10 +1572,10 @@ async function storageSet(key, value) {
 ----------------------------- */
 
 let database = {
-  shop: { name: "TailorPro", currency: "TSh" },
+  shop: { name: "Nyuzi House", currency: "TSh" },
   customers: [],
   orders: [],
-  meta: { lastBackup: null, installDismissed: false }
+  meta: { lastBackup: null, installDismissed: false, onboarded: false }
 };
 
 let currentCustomer = null;
@@ -1274,14 +1585,69 @@ let currentMeasurementType = "suit";
 let currentOrderFilter = "All";
 let dbReady = false;
 let selectedPhotoData = null;
+let customerPickMode = null;
+let pendingPickMode = null;
+let selectedFirstOrderPhoto = null;
 let selectedCustomerPhotoData = null;
+let measurementDrafts = {};
 
 const MEASUREMENT_TYPES = [
   ["suit", "Suit"],
   ["shirt", "Shirt"],
   ["trouser", "Trouser"],
-  ["kanzu", "Kanzu"]
+  ["kanzu", "Kanzu"],
+  ["dress", "Dress"],
+  ["skirt", "Skirt"]
 ];
+
+const MEASUREMENT_GROUPS = {
+  suit: [
+    { title: "Jacket", fields: [
+      ["height", "Height"], ["shoulder", "Shoulder"], ["chest", "Chest"],
+      ["waist", "Waist"], ["hip", "Hip"], ["neck", "Neck"],
+      ["sleeve", "Sleeve length"], ["jacket", "Jacket length"], ["bicep", "Bicep"]
+    ] },
+    { title: "Trouser", fields: [
+      ["trouserWaist", "Trouser waist"], ["trouserLength", "Trouser length"],
+      ["thigh", "Thigh"], ["knee", "Knee"], ["crotch", "Crotch"], ["bottom", "Bottom (hem)"]
+    ] }
+  ],
+  shirt: [
+    { title: "Shirt", fields: [
+      ["neck", "Neck"], ["shoulder", "Shoulder"], ["chest", "Chest"],
+      ["waist", "Waist"], ["hip", "Hip"], ["sleeve", "Sleeve length"],
+      ["shirtLength", "Shirt length"], ["bicep", "Bicep"], ["wrist", "Wrist (cuff)"]
+    ] }
+  ],
+  trouser: [
+    { title: "Trouser", fields: [
+      ["waist", "Waist"], ["hip", "Hip"], ["crotch", "Crotch"],
+      ["thigh", "Thigh"], ["knee", "Knee"], ["bottom", "Bottom (hem)"],
+      ["length", "Length"], ["inseam", "Inseam"]
+    ] }
+  ],
+  kanzu: [
+    { title: "Kanzu", fields: [
+      ["neck", "Neck"], ["shoulder", "Shoulder"], ["chest", "Chest"],
+      ["waist", "Waist"], ["sleeve", "Sleeve length"], ["kanzuLength", "Kanzu length"],
+      ["bicep", "Bicep"], ["wrist", "Wrist (cuff)"]
+    ] }
+  ],
+  dress: [
+    { title: "Dress", fields: [
+      ["bust", "Bust"], ["underbust", "Underbust"], ["waist", "Waist"],
+      ["hip", "Hip"], ["shoulder", "Shoulder"], ["neck", "Neck"],
+      ["armhole", "Armhole"], ["sleeve", "Sleeve length"], ["bicep", "Bicep"],
+      ["bustPoint", "Bust point"], ["shoulderWaist", "Shoulder to waist"], ["dressLength", "Dress length"]
+    ] }
+  ],
+  skirt: [
+    { title: "Skirt", fields: [
+      ["waist", "Waist"], ["highHip", "High hip"], ["hip", "Hip"],
+      ["waistHip", "Waist to hip"], ["skirtLength", "Skirt length"], ["hem", "Hem (bottom width)"]
+    ] }
+  ]
+};
 
 const ORDER_FILTERS = ["All", "In progress", "Ready for fitting", "Done"];
 const STAGES = ["Cutting", "Sewing", "Fitting", "Ready"];
@@ -1295,7 +1661,15 @@ async function loadDatabase() {
 
     try {
 
-      applyLoadedData(JSON.parse(raw));
+      const loaded = JSON.parse(raw);
+
+      applyLoadedData(loaded);
+
+      // Data saved by an older version of the app has no "onboarded" field.
+      // That means this phone was already set up — don't show onboarding to a returning tailor.
+      if (!loaded.meta || loaded.meta.onboarded === undefined) {
+        database.meta.onboarded = true;
+      }
 
     } catch (err) {
 
@@ -1315,7 +1689,13 @@ async function loadDatabase() {
   applyShopBranding();
 
   document.getElementById("loading").classList.remove("active");
-  show("home");
+
+  if (database.meta.onboarded) {
+    show("home");
+  } else {
+    onboardShopName.value = "";
+    show("onboarding");
+  }
 
 }
 
@@ -1325,7 +1705,7 @@ function applyLoadedData(loaded) {
   database.shop = loaded.shop || database.shop;
   database.customers = Array.isArray(loaded.customers) ? loaded.customers : [];
   database.orders = Array.isArray(loaded.orders) ? loaded.orders : [];
-  database.meta = Object.assign({ lastBackup: null, installDismissed: false }, loaded.meta || {});
+  database.meta = Object.assign({ lastBackup: null, installDismissed: false, onboarded: false }, loaded.meta || {});
 
 }
 
@@ -1340,7 +1720,7 @@ async function saveDatabase() {
 
 function applyShopBranding() {
 
-  const name = database.shop.name || "TailorPro";
+  const name = database.shop.name || "Nyuzi House";
   const currency = database.shop.currency || "TSh";
 
   document.getElementById("homeEyebrow").textContent = name.toUpperCase();
@@ -1353,40 +1733,52 @@ function applyShopBranding() {
 
 function renderCoverPhoto() {
 
-  const cover = document.getElementById("homeCover");
   const photo = database.shop.coverPhoto;
 
-  if (photo) {
+  ["homeCover", "onboardCover"].forEach(id => {
 
-    cover.classList.remove("empty");
-    cover.style.backgroundImage = `url('${photo}')`;
-    cover.innerHTML = `<div class="cover-edit-badge">📷</div>`;
+    const cover = document.getElementById(id);
+    if (!cover) return;
 
-  } else {
+    if (photo) {
 
-    cover.classList.add("empty");
-    cover.style.backgroundImage = "none";
-    cover.innerHTML = `
-      <div style="font-size:24px">🖼️</div>
-      <div style="font-size:12px; margin-top:6px">Add a cover photo for your shop</div>
-    `;
+      cover.classList.remove("empty");
+      cover.style.backgroundImage = `url('${photo}')`;
+      cover.innerHTML = `<div class="cover-edit-badge">📷</div>`;
 
-  }
+    } else {
+
+      cover.classList.add("empty");
+      cover.style.backgroundImage = "none";
+      cover.innerHTML = `
+        <div style="font-size:24px">🖼️</div>
+        <div style="font-size:12px; margin-top:6px">Add a cover photo for your shop</div>
+      `;
+
+    }
+
+  });
 
 }
 
-async function handleCoverPhotoSelect(event) {
+function handleCoverPhotoSelect(event) {
 
   const file = event.target.files[0];
+  event.target.value = "";   // so the same photo can be picked again after a cancel
+
   if (!file) return;
 
-  readAndCompressImage(file, 900, 0.65, async dataUrl => {
+  readAndCompressImage(file, 900, 0.65, dataUrl => {
 
-    database.shop.coverPhoto = dataUrl;
+    confirmPhotoSheet("Use this cover photo?", dataUrl, "wide", async chosen => {
 
-    await saveDatabase();
-    renderCoverPhoto();
-    showToast("Cover photo updated");
+      database.shop.coverPhoto = chosen;
+
+      await saveDatabase();
+      renderCoverPhoto();
+      showToast("Cover photo updated");
+
+    });
 
   });
 
@@ -1499,6 +1891,8 @@ function show(screen) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(screen).classList.add("active");
 
+  document.getElementById("app").classList.toggle("onboarding-active", screen === "onboarding");
+
   document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
 
   if (screen === "home") navHome.classList.add("active");
@@ -1511,7 +1905,12 @@ function show(screen) {
     navOrders.classList.add("active");
   }
 
-  if (screen === "customers") renderCustomers(customerSearch.value);
+  if (screen === "customers") {
+    customerPickMode = pendingPickMode;
+    pendingPickMode = null;
+    updateCustomersHeader();
+    renderCustomers(customerSearch.value);
+  }
   if (screen === "orders") renderOrders();
 
   if (screen === "home") {
@@ -1533,12 +1932,25 @@ function show(screen) {
    SETTINGS
 ----------------------------- */
 
+async function saveOnboarding() {
+
+  const name = onboardShopName.value.trim() || "Nyuzi House";
+
+  database.shop.name = name;
+  database.meta.onboarded = true;
+
+  await saveDatabase();
+  applyShopBranding();
+  show("home");
+
+}
+
 async function saveSettings() {
 
-  const name = settingsShopName.value.trim() || "TailorPro";
+  const name = settingsShopName.value.trim() || "Nyuzi House";
   const currency = settingsCurrency.value.trim() || "TSh";
 
-  database.shop = { name, currency };
+  database.shop = { ...database.shop, name, currency };
 
   await saveDatabase();
   applyShopBranding();
@@ -1575,6 +1987,8 @@ function readAndCompressImage(file, maxWidth, quality, callback) {
 
     };
 
+    img.onerror = () => showAlert("Couldn't read that photo. Please try another one.");
+
     img.src = e.target.result;
 
   };
@@ -1599,8 +2013,16 @@ function newCustomer() {
   newName.value = "";
   newPhone.value = "";
   newLocation.value = "";
+  newOrderCount.value = "";
   newNotes.value = "";
   newVip.checked = false;
+
+  firstOrderGarment.value = "";
+  firstOrderPrice.value = "";
+  firstOrderPaid.value = "";
+  firstOrderDue.value = "";
+  clearFirstOrderPhoto();
+  firstOrderSection.style.display = "block";
 
   customerPhotoPicker.innerHTML = `📷<span>Add Photo</span>`;
 
@@ -1622,8 +2044,11 @@ function editCustomer(id) {
   newName.value = customer.name;
   newPhone.value = customer.phone;
   newLocation.value = customer.location || "";
+  newOrderCount.value = customer.pastOrders || "";
   newNotes.value = customer.notes || "";
   newVip.checked = !!customer.vip;
+
+  firstOrderSection.style.display = "none";
 
   customerPhotoPicker.innerHTML = customer.photo
     ? `<img src="${customer.photo}">`
@@ -1642,6 +2067,56 @@ function handleCustomerPhotoSelect(event) {
 
     selectedCustomerPhotoData = dataUrl;
     customerPhotoPicker.innerHTML = `<img src="${dataUrl}">`;
+
+  });
+
+}
+
+// Shows the chosen photo first, so an accidental pick can be cancelled
+function confirmPhotoSheet(title, dataUrl, shape, onUse) {
+
+  openModalHtml(`
+    <p style="text-align:center"><b>${escapeHtml(title)}</b></p>
+    <div class="photo-preview ${shape}"><img src="${dataUrl}"></div>
+    <div style="display:flex; gap:10px; margin-top:18px">
+      <button class="btn secondary" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn" style="flex:1" id="photoUseBtn">Use this photo</button>
+    </div>
+  `);
+
+  document.getElementById("photoUseBtn").onclick = async () => {
+    closeModal();
+    await onUse(dataUrl);
+  };
+
+}
+
+function handleProfilePhotoSelect(event) {
+
+  const file = event.target.files[0];
+  event.target.value = "";   // so the same photo can be picked again after a cancel
+
+  if (!file) return;
+
+  const customer = database.customers.find(c => c.id === currentCustomer);
+  if (!customer) return;
+
+  const customerId = customer.id;
+
+  readAndCompressImage(file, 400, 0.7, dataUrl => {
+
+    confirmPhotoSheet("Use this photo for " + customer.name + "?", dataUrl, "circle", async chosen => {
+
+      const target = database.customers.find(c => c.id === customerId);
+      if (!target) return;
+
+      target.photo = chosen;
+
+      await saveDatabase();
+      showToast("Photo updated");
+      openProfile(customerId);
+
+    });
 
   });
 
@@ -1667,6 +2142,18 @@ async function saveCustomer() {
     return;
   }
 
+  const pastOrders = Math.max(0, parseInt(newOrderCount.value, 10) || 0);
+
+  const firstGarment = firstOrderGarment.value.trim();
+  const firstPrice = Number(firstOrderPrice.value) || 0;
+  const firstPaid = Number(firstOrderPaid.value) || 0;
+  const firstDue = firstOrderDue.value || "";
+
+  if (!editingCustomerId && !firstGarment && (firstPrice || firstPaid || firstDue || selectedFirstOrderPhoto)) {
+    showAlert("Type the garment for the first order, or clear the order details.");
+    return;
+  }
+
   if (editingCustomerId) {
 
     const customer = database.customers.find(c => c.id === editingCustomerId);
@@ -1674,6 +2161,7 @@ async function saveCustomer() {
     customer.name = name;
     customer.phone = phone;
     customer.location = newLocation.value.trim();
+    customer.pastOrders = pastOrders;
     customer.notes = newNotes.value.trim();
     customer.vip = newVip.checked;
     customer.photo = selectedCustomerPhotoData;
@@ -1689,6 +2177,7 @@ async function saveCustomer() {
       name,
       phone,
       location: newLocation.value.trim(),
+      pastOrders,
       notes: newNotes.value.trim(),
       vip: newVip.checked,
       photo: selectedCustomerPhotoData,
@@ -1697,11 +2186,42 @@ async function saveCustomer() {
 
     database.customers.unshift(customer);
 
+    if (firstGarment) {
+
+      database.orders.unshift({
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+        customerId: customer.id,
+        garment: firstGarment,
+        price: firstPrice,
+        paid: firstPaid,
+        dueDate: firstDue,
+        stage: 0,
+        status: "In progress",
+        photo: selectedFirstOrderPhoto || null
+      });
+
+    }
+
     await saveDatabase();
-    showToast("Customer saved");
     openProfile(customer.id);
+    showCustomerSavedSheet(customer, !!firstGarment);
 
   }
+
+}
+
+function showCustomerSavedSheet(customer, addedOrder) {
+
+  openModalHtml(`
+    <div style="text-align:center">
+      <div class="success-check">✓</div>
+      <p><b>${escapeHtml(customer.name)} is saved</b></p>
+      <p class="muted" style="margin-top:4px">${addedOrder ? "Their first order is added too. " : ""}Next step: take their measurements.</p>
+    </div>
+    <button class="btn" style="margin-top:18px" onclick="closeModal(); openMeasurements('suit')">📏 Take measurements now</button>
+    <button class="btn secondary" style="margin-top:10px" onclick="closeModal()">Later</button>
+  `);
 
 }
 
@@ -1724,6 +2244,39 @@ function deleteCustomer(id) {
 /* -----------------------------
    SEARCH
 ----------------------------- */
+
+function openCustomersFor(mode) {
+
+  pendingPickMode = mode;
+  customerSearch.value = "";
+
+  show("customers");
+
+}
+
+function updateCustomersHeader() {
+
+  const picking = customerPickMode === "measurements";
+
+  customersTitle.textContent = picking ? "Measurements" : "Customers";
+  customersHint.style.display = picking ? "block" : "none";
+
+}
+
+// Tapping a customer: open their measurements if we came from Home > Measurements, otherwise their profile
+function pickCustomer(id) {
+
+  const mode = customerPickMode;
+  customerPickMode = null;
+
+  if (mode === "measurements") {
+    currentCustomer = id;
+    openMeasurements();
+  } else {
+    openProfile(id);
+  }
+
+}
 
 function searchFromHome(value) {
 
@@ -1754,11 +2307,11 @@ function renderCustomers(search = "") {
 
   customerList.innerHTML = customers.map(customer => {
 
-    const orderCount = database.orders.filter(o => o.customerId === customer.id).length;
+    const orderCount = customerOrderTotal(customer);
     const lastMeasurement = customer.lastMeasurementDate;
 
     return `
-      <div class="customer" onclick="openProfile('${customer.id}')">
+      <div class="customer" onclick="pickCustomer('${customer.id}')">
         <div class="avatar">${avatarInner(customer)}</div>
         <div class="customer-info">
           <div class="name">${escapeHtml(customer.name)}${customer.vip ? '<span class="vip-pill">VIP</span>' : ""}</div>
@@ -1799,6 +2352,20 @@ function escapeHtml(value) {
 
 }
 
+function customerOrderTotal(customer) {
+
+  const logged = database.orders.filter(o => o.customerId === customer.id).length;
+
+  return (customer.pastOrders || 0) + logged;
+
+}
+
+function escapeAttr(value) {
+
+  return escapeHtml(value).replace(/"/g, "&quot;");
+
+}
+
 function money(value) {
 
   return (database.shop.currency || "TSh") + " " + Number(value || 0).toLocaleString();
@@ -1812,7 +2379,7 @@ function garmentIcon(name) {
   if (n.includes("suit") || n.includes("jacket") || n.includes("blazer")) return "🧥";
   if (n.includes("shirt")) return "👕";
   if (n.includes("trouser") || n.includes("pant")) return "👖";
-  if (n.includes("dress") || n.includes("gown")) return "👗";
+  if (n.includes("dress") || n.includes("gown") || n.includes("skirt")) return "👗";
   if (n.includes("kanzu")) return "🥻";
 
   return "🧵";
@@ -1827,27 +2394,94 @@ function formatOrderDate(order) {
 
 }
 
-function stageProgress(status) {
+function parseLocalDate(str) {
 
-  if (status === "Done") return { doneUpTo: 3, current: -1 };
-  if (status === "Ready for fitting") return { doneUpTo: 1, current: 2 };
+  const [y, m, d] = str.split("-").map(Number);
 
-  return { doneUpTo: 0, current: 1 };
+  return new Date(y, m - 1, d);
 
 }
 
-function renderStageTracker(status) {
+function formatDueDate(str) {
 
-  const { doneUpTo, current } = stageProgress(status);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(str || "")) return str || "—";
+
+  return parseLocalDate(str).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+}
+
+function isOverdue(str) {
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(str || "")) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return parseLocalDate(str) < today;
+
+}
+
+// An order is at one of 4 stages: 0 Cutting, 1 Sewing, 2 Fitting, 3 Ready.
+// The older 3-value "status" is kept in step with it (filters and earnings use it).
+function statusFromStage(stage) {
+
+  if (stage >= 3) return "Done";
+  if (stage === 2) return "Ready for fitting";
+
+  return "In progress";
+
+}
+
+function orderStage(order) {
+
+  if (typeof order.stage === "number") return order.stage;
+
+  // Orders saved before stages existed
+  if (order.status === "Done") return 3;
+  if (order.status === "Ready for fitting") return 2;
+
+  return 1;
+
+}
+
+// Pass an orderId to make the dots tappable
+function renderStageTracker(stage, orderId) {
 
   return `
     <div class="stage-tracker">
       ${STAGES.map((label, i) => {
-        const cls = i <= doneUpTo ? "done" : i === current ? "current" : "";
-        return `<div class="stage ${cls}"><div class="stage-dot"></div>${label}</div>`;
+        const cls = stage >= 3 || i < stage ? "done" : i === stage ? "current" : "";
+        const tap = orderId
+          ? ` tappable" onclick="event.stopPropagation(); setOrderStage('${orderId}', ${i})`
+          : "";
+        return `<div class="stage ${cls}${tap}"><div class="stage-dot"></div>${label}</div>`;
       }).join("")}
     </div>
   `;
+
+}
+
+async function setOrderStage(orderId, stage) {
+
+  const order = database.orders.find(o => o.id === orderId);
+  if (!order) return;
+
+  if (orderStage(order) === stage) return;
+
+  order.stage = stage;
+  order.status = statusFromStage(stage);
+
+  await saveDatabase();
+
+  showToast(order.garment + ": " + STAGES[stage]);
+
+  renderOrders();
+
+  // If this order is open in the details screen, keep it in step
+  if (editingOrderId === orderId) {
+    refreshOrderContextHeader(order);
+    orderStageSelect.value = String(stage);
+  }
 
 }
 
@@ -1871,12 +2505,23 @@ function openProfile(id) {
   const lastOrder = orders.slice().sort((a, b) => Number(b.id) - Number(a.id))[0];
   const lastOrderDate = lastOrder ? formatOrderDate(lastOrder) : "—";
 
+  // Soonest due date among orders that aren't finished yet
+  const nextDue = orders
+    .filter(o => o.status !== "Done" && o.dueDate)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];
+
+  const dueText = nextDue ? formatDueDate(nextDue.dueDate) : "—";
+  const dueOverdue = nextDue ? isOverdue(nextDue.dueDate) : false;
+
   const phoneDigits = customer.phone.replace(/\D/g, "");
 
   profileContent.innerHTML = `
 
     <div class="profile">
-      <div class="avatar">${avatarInner(customer)}</div>
+      <button class="avatar-btn" onclick="profilePhotoInput.click()">
+        <div class="avatar">${avatarInner(customer)}</div>
+        <span class="avatar-badge">📷</span>
+      </button>
       <h2>${escapeHtml(customer.name)}${customer.vip ? '<span class="vip-pill">VIP</span>' : ""}</h2>
       <div class="muted">
         ${escapeHtml(customer.phone)}
@@ -1907,7 +2552,7 @@ function openProfile(id) {
       <div class="row">
         <span class="row-icon">📦</span>
         <span class="row-label">Total Orders</span>
-        <b>${orders.length}</b>
+        <b>${customerOrderTotal(customer)}</b>
       </div>
       <div class="row">
         <span class="row-icon">💰</span>
@@ -1919,10 +2564,15 @@ function openProfile(id) {
         <span class="row-label">Outstanding Balance</span>
         <b class="${outstanding > 0 ? "danger-text" : ""}">${money(outstanding)}</b>
       </div>
-      <div class="row" style="border-bottom:none">
+      <div class="row">
         <span class="row-icon">📅</span>
         <span class="row-label">Last Order</span>
         <b>${lastOrderDate}</b>
+      </div>
+      <div class="row" style="border-bottom:none">
+        <span class="row-icon">⏰</span>
+        <span class="row-label">Due Date</span>
+        <b class="${dueOverdue ? "danger-text" : ""}">${dueText}${dueOverdue ? " (overdue)" : ""}</b>
       </div>
     </div>
 
@@ -1947,74 +2597,139 @@ function openProfile(id) {
    MEASUREMENTS
 ----------------------------- */
 
+function measurementFieldList(type) {
+
+  return MEASUREMENT_GROUPS[type].flatMap(group => group.fields);
+
+}
+
+function measurementTypeLabel(type) {
+
+  return MEASUREMENT_TYPES.find(([key]) => key === type)[1];
+
+}
+
+function todayLabel() {
+
+  return new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+}
+
+// Remember what is typed on screen so switching garments never loses it
+function captureMeasurementDraft() {
+
+  const dateEl = document.getElementById("measurementDate");
+
+  if (!dateEl) return {};
+
+  const draft = { date: dateEl.value };
+
+  measurementFieldList(currentMeasurementType).forEach(([key]) => {
+    const el = document.getElementById("m_" + key);
+    if (el) draft[key] = el.value;
+  });
+
+  measurementDrafts[currentMeasurementType] = draft;
+
+  return draft;
+
+}
+
 function openMeasurements(type) {
+
+  measurementDrafts = {};
 
   if (type) currentMeasurementType = type;
 
-  measurementChips.innerHTML = MEASUREMENT_TYPES.map(([key, label]) => `
-    <button class="chip ${key === currentMeasurementType ? "active" : ""}" onclick="openMeasurements('${key}')">${label}</button>
-  `).join("");
+  renderMeasurements();
+
+  show("measurements");
+
+}
+
+function switchMeasurementType(type) {
+
+  captureMeasurementDraft();
+
+  currentMeasurementType = type;
+
+  renderMeasurements();
+
+}
+
+function renderMeasurements() {
 
   const customer = database.customers.find(c => c.id === currentCustomer);
-  const m = (customer.measurements && customer.measurements[currentMeasurementType]) || {};
+  if (!customer) return;
 
-  const fields = [
-    ["height", "Height"], ["shoulder", "Shoulder"], ["chest", "Chest"],
-    ["waist", "Waist"], ["hip", "Hip"], ["neck", "Neck"],
-    ["sleeve", "Sleeve length"], ["jacket", "Jacket length"],
-    ["trouserWaist", "Trouser waist"], ["trouserLength", "Trouser length"],
-    ["thigh", "Thigh"], ["knee", "Knee"], ["crotch", "Crotch"]
-  ];
+  const saved = customer.measurements || {};
+  const groups = MEASUREMENT_GROUPS[currentMeasurementType];
+  const typeLabel = measurementTypeLabel(currentMeasurementType);
+
+  measurementChips.innerHTML = MEASUREMENT_TYPES.map(([key, label]) => `
+    <button class="chip ${key === currentMeasurementType ? "active" : ""}" onclick="switchMeasurementType('${key}')">${label}${saved[key] ? " ✓" : ""}</button>
+  `).join("");
+
+  const m = measurementDrafts[currentMeasurementType] || saved[currentMeasurementType] || {};
 
   measurementForm.innerHTML = `
     <div class="form">
 
       <label>DATE</label>
-      <input id="measurementDate" value="${m.date || new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}">
+      <input id="measurementDate" value="${escapeAttr(m.date || todayLabel())}">
 
-      <div class="measurements">
-        ${fields.map(field => `
-          <div>
-            <label>${field[1].toUpperCase()} (CM)</label>
-            <input id="m_${field[0]}" value="${m[field[0]] || ""}">
-          </div>
-        `).join("")}
-      </div>
+      ${groups.map(group => `
+        ${groups.length > 1 ? `<div class="group-title">${group.title}</div>` : ""}
+        <div class="measurements">
+          ${group.fields.map(([key, label]) => `
+            <div>
+              <label>${label.toUpperCase()} (CM)</label>
+              <input id="m_${key}" inputmode="decimal" value="${escapeAttr(m[key] || "")}">
+            </div>
+          `).join("")}
+        </div>
+      `).join("")}
 
       <br>
 
-      <button class="btn" onclick="saveMeasurements()">Save measurements</button>
+      <button class="btn" onclick="saveMeasurements()">Save ${typeLabel.toLowerCase()} measurements</button>
 
       <button class="btn secondary" style="margin-top:10px" onclick="shareMeasurements()">Share on WhatsApp</button>
 
     </div>
   `;
 
-  show("measurements");
-
 }
 
 async function saveMeasurements() {
 
   const customer = database.customers.find(c => c.id === currentCustomer);
+  const type = currentMeasurementType;
 
-  const fields = [
-    "height", "shoulder", "chest", "waist", "hip", "neck", "sleeve",
-    "jacket", "trouserWaist", "trouserLength", "thigh", "knee", "crotch"
-  ];
+  const draft = captureMeasurementDraft();
+  const fields = measurementFieldList(type);
 
-  const measurements = { date: measurementDate.value };
+  const hasValue = fields.some(([key]) => (draft[key] || "").trim() !== "");
 
-  fields.forEach(field => {
-    measurements[field] = document.getElementById("m_" + field).value;
+  if (!hasValue) {
+    showAlert("Type at least one measurement first.");
+    return;
+  }
+
+  const measurements = { date: (draft.date || "").trim() || todayLabel() };
+
+  fields.forEach(([key]) => {
+    measurements[key] = (draft[key] || "").trim();
   });
 
   if (!customer.measurements) customer.measurements = {};
-  customer.measurements[currentMeasurementType] = measurements;
+  customer.measurements[type] = measurements;
   customer.lastMeasurementDate = measurements.date;
 
+  delete measurementDrafts[type];
+
   await saveDatabase();
-  showToast("Measurements saved");
+  showToast(measurementTypeLabel(type) + " measurements saved");
   openProfile(currentCustomer);
 
 }
@@ -2022,22 +2737,20 @@ async function saveMeasurements() {
 function shareMeasurements() {
 
   const customer = database.customers.find(c => c.id === currentCustomer);
-  const m = (customer.measurements && customer.measurements[currentMeasurementType]) || {};
+  const type = currentMeasurementType;
 
-  const typeLabel = MEASUREMENT_TYPES.find(([key]) => key === currentMeasurementType)[1];
+  const draft = captureMeasurementDraft();
 
-  const labels = {
-    height: "Height", shoulder: "Shoulder", chest: "Chest", waist: "Waist",
-    hip: "Hip", neck: "Neck", sleeve: "Sleeve length", jacket: "Jacket length",
-    trouserWaist: "Trouser waist", trouserLength: "Trouser length",
-    thigh: "Thigh", knee: "Knee", crotch: "Crotch"
-  };
+  const lines = measurementFieldList(type)
+    .filter(([key]) => (draft[key] || "").trim() !== "")
+    .map(([key, label]) => `${label}: ${draft[key].trim()} cm`);
 
-  let text = `${typeLabel} measurements for ${customer.name} (${m.date || ""}):\n`;
+  if (!lines.length) {
+    showAlert("Add some measurements first, then share.");
+    return;
+  }
 
-  Object.keys(labels).forEach(key => {
-    if (m[key]) text += `${labels[key]}: ${m[key]} cm\n`;
-  });
+  const text = `${measurementTypeLabel(type)} measurements for ${customer.name} (${draft.date || todayLabel()}):\n` + lines.join("\n");
 
   const phoneDigits = customer.phone.replace(/\D/g, "");
 
@@ -2049,6 +2762,28 @@ function shareMeasurements() {
 /* -----------------------------
    NEW / EDIT ORDER
 ----------------------------- */
+
+function refreshOrderContextHeader(order) {
+
+  const balance = Number(order.price || 0) - Number(order.paid || 0);
+
+  orderContextHeader.innerHTML = `
+    <div class="context-card">
+      <div class="stats">
+        <div class="stat">
+          <div class="label">Deposit paid</div>
+          <div class="value">${money(order.paid)}</div>
+        </div>
+        <div class="stat">
+          <div class="label">Balance</div>
+          <div class="value" style="${balance > 0 ? "color:var(--danger)" : ""}">${money(balance)}</div>
+        </div>
+      </div>
+      ${renderStageTracker(orderStage(order), order.id)}
+    </div>
+  `;
+
+}
 
 function newOrder() {
 
@@ -2075,9 +2810,10 @@ function newOrder() {
   orderPrice.value = "";
   orderPaid.value = "";
   orderDue.value = "";
-  orderStatus.value = "In progress";
+  orderStageSelect.value = "0";
   orderPhotoInput.value = "";
   orderPhotoPreview.style.display = "none";
+  orderPhotoRemove.style.display = "none";
 
   newOrderBack.onclick = () => show("orders");
 
@@ -2105,23 +2841,7 @@ function openOrder(orderId) {
   orderDeleteWrap.style.display = "block";
   orderMessageWrap.style.display = "block";
 
-  const balance = Number(order.price || 0) - Number(order.paid || 0);
-
-  orderContextHeader.innerHTML = `
-    <div class="context-card">
-      <div class="stats">
-        <div class="stat">
-          <div class="label">Deposit paid</div>
-          <div class="value">${money(order.paid)}</div>
-        </div>
-        <div class="stat">
-          <div class="label">Balance</div>
-          <div class="value" style="${balance > 0 ? "color:var(--danger)" : ""}">${money(balance)}</div>
-        </div>
-      </div>
-      ${renderStageTracker(order.status)}
-    </div>
-  `;
+  refreshOrderContextHeader(order);
 
   orderCustomer.innerHTML = database.customers.map(c =>
     `<option value="${c.id}">${escapeHtml(c.name)}</option>`
@@ -2132,13 +2852,15 @@ function openOrder(orderId) {
   orderPrice.value = order.price || "";
   orderPaid.value = order.paid || "";
   orderDue.value = order.dueDate || "";
-  orderStatus.value = order.status;
+  orderStageSelect.value = String(orderStage(order));
 
   if (order.photo) {
     orderPhotoPreview.src = order.photo;
     orderPhotoPreview.style.display = "block";
+    orderPhotoRemove.style.display = "block";
   } else {
     orderPhotoPreview.style.display = "none";
+    orderPhotoRemove.style.display = "none";
   }
 
   newOrderBack.onclick = () => show("orders");
@@ -2150,6 +2872,8 @@ function openOrder(orderId) {
 function handlePhotoSelect(event) {
 
   const file = event.target.files[0];
+  event.target.value = "";
+
   if (!file) return;
 
   readAndCompressImage(file, 700, 0.6, dataUrl => {
@@ -2157,8 +2881,43 @@ function handlePhotoSelect(event) {
     selectedPhotoData = dataUrl;
     orderPhotoPreview.src = dataUrl;
     orderPhotoPreview.style.display = "block";
+    orderPhotoRemove.style.display = "block";
 
   });
+
+}
+
+function clearOrderPhoto() {
+
+  selectedPhotoData = null;
+  orderPhotoPreview.style.display = "none";
+  orderPhotoRemove.style.display = "none";
+
+}
+
+function handleFirstOrderPhotoSelect(event) {
+
+  const file = event.target.files[0];
+  event.target.value = "";
+
+  if (!file) return;
+
+  readAndCompressImage(file, 700, 0.6, dataUrl => {
+
+    selectedFirstOrderPhoto = dataUrl;
+    firstOrderPhotoPreview.src = dataUrl;
+    firstOrderPhotoPreview.style.display = "block";
+    firstOrderPhotoRemove.style.display = "block";
+
+  });
+
+}
+
+function clearFirstOrderPhoto() {
+
+  selectedFirstOrderPhoto = null;
+  firstOrderPhotoPreview.style.display = "none";
+  firstOrderPhotoRemove.style.display = "none";
 
 }
 
@@ -2195,7 +2954,8 @@ async function saveOrder() {
     price: Number(orderPrice.value) || 0,
     paid: Number(orderPaid.value) || 0,
     dueDate: orderDue.value || "",
-    status: orderStatus.value,
+    stage: Number(orderStageSelect.value),
+    status: statusFromStage(Number(orderStageSelect.value)),
     photo: selectedPhotoData || null
   };
 
@@ -2266,7 +3026,7 @@ function renderOrders() {
 
   const statusClass = status => status === "Done" ? "done" : status === "In progress" ? "progress" : "ready";
 
-  ordersList.innerHTML = filtered.map(order => {
+  ordersList.innerHTML = `<p class="muted" style="margin:0 0 10px">👆 Tap a dot to update an order</p>` + filtered.map(order => {
 
     const customer = database.customers.find(c => c.id === order.customerId);
     const balance = Number(order.price || 0) - Number(order.paid || 0);
@@ -2281,7 +3041,7 @@ function renderOrders() {
           </div>
           <p class="muted" style="margin:4px 0 8px">${customer ? escapeHtml(customer.name) : "Unknown customer"} · ${money(order.price)}${order.dueDate ? " · due " + order.dueDate : ""}</p>
           ${balance > 0 ? `<p class="muted" style="color:var(--danger); margin:0 0 6px">Balance owed: ${money(balance)}</p>` : ""}
-          ${renderStageTracker(order.status)}
+          ${renderStageTracker(orderStage(order), order.id)}
         </div>
       </div>
     `;
@@ -2355,7 +3115,7 @@ async function exportBackup() {
   const fileName = "tailorpro-backup-" + stamp + ".json";
 
   const payload = JSON.stringify({
-    app: "TailorPro",
+    app: "Nyuzi House",
     version: 1,
     exportedAt: new Date().toISOString(),
     data: database
@@ -2368,7 +3128,7 @@ async function exportBackup() {
 
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
 
-      await navigator.share({ files: [file], title: "TailorPro backup" });
+      await navigator.share({ files: [file], title: "Nyuzi House backup" });
       await markBackupDone();
       return;
 
@@ -2418,7 +3178,7 @@ function handleRestoreFile(event) {
     const data = parsed && parsed.data;
 
     if (!data || !Array.isArray(data.customers) || !Array.isArray(data.orders)) {
-      showAlert("This file is not a TailorPro backup.");
+      showAlert("This file is not a Nyuzi House backup.");
       return;
     }
 
@@ -2485,7 +3245,7 @@ function renderInstallNudge() {
   installNudge.innerHTML = shouldShow ? `
     <div class="nudge">
       <div style="font-size:22px">📲</div>
-      <div class="nudge-text"><b>Install TailorPro</b>Put it on your home screen and use it like an app, even offline.</div>
+      <div class="nudge-text"><b>Install Nyuzi House</b>Put it on your home screen and use it like an app, even offline.</div>
       <button onclick="showInstallHelp()">Install</button>
       <button class="nudge-x" onclick="dismissInstallNudge()">✕</button>
     </div>
