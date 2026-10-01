@@ -2,6 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// TEMPORARY diagnostic: shows any error directly on screen instead of a silent blank page.
+window.addEventListener('error', function (e) {
+  showNyuziDebugError('Error: ' + e.message + '\n(' + e.filename + ':' + e.lineno + ')');
+});
+window.addEventListener('unhandledrejection', function (e) {
+  var reason = e.reason;
+  var msg = reason && reason.message ? reason.message : String(reason);
+  var stack = reason && reason.stack ? ('\n' + reason.stack) : '';
+  showNyuziDebugError('Promise error: ' + msg + stack);
+});
+function showNyuziDebugError(msg) {
+  var el = document.getElementById('nyuziDebugError');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'nyuziDebugError';
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c0392b;color:white;padding:14px;font-size:12px;z-index:99999;white-space:pre-wrap;max-height:70vh;overflow:auto;font-family:monospace;';
+    document.body.appendChild(el);
+  }
+  el.textContent += (el.textContent ? '\n-----\n' : '') + msg;
+}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#6C4CE0">
 <meta name="mobile-web-app-capable" content="yes">
