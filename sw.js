@@ -1,6 +1,6 @@
 // TailorPro service worker: lets the app open with no internet.
 // Bump CACHE_VERSION whenever you publish a new version of the app.
-const CACHE_VERSION = "nyuzihouse-v1";
+const CACHE_VERSION = "nyuzihouse-v2";
 
 const CORE_FILES = [
   "./",
@@ -48,7 +48,7 @@ self.addEventListener("fetch", event => {
   // fall back to the saved copy when it's slow or offline.
   if (request.mode === "navigate") {
     event.respondWith(
-      fetchWithTimeout(request, 4000)
+      fetchWithTimeout(request, 15000)
         .then(response => {
           const copy = response.clone();
           caches.open(CACHE_VERSION).then(cache => cache.put("./index.html", copy));
