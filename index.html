@@ -3,26 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <script>
-// TEMPORARY diagnostic: shows any error directly on screen instead of a silent blank page.
+// TEMPORARY diagnostic: visible step-by-step log, so we can see exactly
+// where things stop, even if nothing technically throws an error.
+window.__nyuziLog = [];
+function nyuziLog(msg) {
+  window.__nyuziLog.push(msg);
+  var el = document.getElementById('nyuziDebugLog');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'nyuziDebugLog';
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#111;color:#0f0;padding:10px;font-size:11px;z-index:99999;white-space:pre-wrap;max-height:60vh;overflow:auto;font-family:monospace;';
+    document.documentElement.appendChild(el);
+  }
+  el.textContent = window.__nyuziLog.join('\n');
+}
 window.addEventListener('error', function (e) {
-  showNyuziDebugError('Error: ' + e.message + '\n(' + e.filename + ':' + e.lineno + ')');
+  nyuziLog('JS ERROR: ' + e.message + ' (' + e.filename + ':' + e.lineno + ')');
 });
 window.addEventListener('unhandledrejection', function (e) {
   var reason = e.reason;
   var msg = reason && reason.message ? reason.message : String(reason);
-  var stack = reason && reason.stack ? ('\n' + reason.stack) : '';
-  showNyuziDebugError('Promise error: ' + msg + stack);
+  nyuziLog('PROMISE ERROR: ' + msg);
 });
-function showNyuziDebugError(msg) {
-  var el = document.getElementById('nyuziDebugError');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'nyuziDebugError';
-    el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c0392b;color:white;padding:14px;font-size:12px;z-index:99999;white-space:pre-wrap;max-height:70vh;overflow:auto;font-family:monospace;';
-    document.body.appendChild(el);
-  }
-  el.textContent += (el.textContent ? '\n-----\n' : '') + msg;
-}
+nyuziLog('1. head script ran');
+document.addEventListener('DOMContentLoaded', function () { nyuziLog('2. DOM ready'); });
+window.addEventListener('load', function () { nyuziLog('3. window load fired'); });
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#6C4CE0">
@@ -2193,7 +2198,8 @@ async function saveNotesFromModal() {
 
 function show(screen) {
 
-  if (!dbReady && screen !== "loading") return;
+  const screensBeforeLogin = ["loading", "auth", "connError"];
+  if (!dbReady && !screensBeforeLogin.includes(screen)) return;
 
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(screen).classList.add("active");
@@ -3627,29 +3633,40 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
    START
 ----------------------------- */
 
+nyuziLog("4. app script reached the bottom, timer armed");
+
 setTimeout(async () => {
+
+  nyuziLog("5. boot timer fired");
 
   document.getElementById("splash").classList.add("fade-out");
 
+  nyuziLog("6. asking the library to load...");
   const connected = await connectSupabase();
+  nyuziLog("7. library load finished, connected=" + connected);
 
   if (!connected) {
     document.getElementById("loading").classList.remove("active");
     show("connError");
+    nyuziLog("8. showed connError screen");
     return;
   }
 
+  nyuziLog("8. checking for an existing session...");
   const { data } = await sb.auth.getSession();
+  nyuziLog("9. session check done, has session=" + !!data.session);
 
   if (data.session) {
 
     currentSession = data.session;
     await loadDatabase();
+    nyuziLog("10. loadDatabase finished");
 
   } else {
 
     document.getElementById("loading").classList.remove("active");
     show("auth");
+    nyuziLog("10. showed auth screen");
 
   }
 
