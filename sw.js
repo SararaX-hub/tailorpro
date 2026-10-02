@@ -1,6 +1,6 @@
 // TailorPro service worker: lets the app open with no internet.
 // Bump CACHE_VERSION whenever you publish a new version of the app.
-const CACHE_VERSION = "nyuzihouse-v6";
+const CACHE_VERSION = "nyuzihouse-v8";
 
 const CORE_FILES = [
   "./",
