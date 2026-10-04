@@ -1803,7 +1803,71 @@ async function logout() {
 
 
 /* -----------------------------
-   STORAGE (lives on this phone: IndexedDB, with localStorage as a fallback)
+   CLOUD DATA HELPERS
+----------------------------- */
+
+function publicPhotoUrl(path) {
+
+  return path ? SUPABASE_URL + "/storage/v1/object/public/photos/" + path : null;
+
+}
+
+async function uploadPhoto(dataUrl, folder) {
+
+  const uid = currentSession.user.id;
+
+  const blob = await (await fetch(dataUrl)).blob();
+
+  const path = uid + "/" + folder + "/" + Date.now() + "-" + Math.random().toString(36).slice(2) + ".jpg";
+
+  const { error } = await sb.storage.from("photos").upload(path, blob, {
+    contentType: "image/jpeg",
+    upsert: true,
+  });
+
+  if (error) throw error;
+
+  return path;
+
+}
+
+function dbCustomerToLocal(row) {
+
+  return {
+    id: row.id,
+    name: row.name,
+    phone: row.phone,
+    location: row.location || "",
+    notes: row.notes || "",
+    vip: !!row.vip,
+    photo: publicPhotoUrl(row.photo_path),
+    pastOrders: row.past_orders || 0,
+    lastMeasurementDate: row.last_measurement_date || null,
+    measurements: row.measurements || {},
+  };
+
+}
+
+function dbOrderToLocal(row) {
+
+  return {
+    id: row.id,
+    customerId: row.customer_id,
+    garment: row.garment,
+    price: Number(row.price) || 0,
+    paid: Number(row.paid) || 0,
+    dueDate: row.due_date || "",
+    stage: row.stage,
+    status: row.status,
+    photo: publicPhotoUrl(row.photo_path),
+    createdAt: row.created_at,
+  };
+
+}
+
+
+/* -----------------------------
+   STORAGE (an offline cache on this phone: IndexedDB, with localStorage as a fallback)
 ----------------------------- */
 
 const STORAGE_KEY = "database";
@@ -1968,26 +2032,47 @@ const STAGES = ["Cutting", "Sewing", "Fitting", "Ready"];
 
 async function loadDatabase() {
 
-  const raw = await storageGet(STORAGE_KEY);
+  const uid = currentSession.user.id;
 
-  if (raw) {
+  try {
 
-    try {
+    const [shopRes, custRes, orderRes] = await Promise.all([
+      sb.from("shops").select("*").eq("id", uid).single(),
+      sb.from("customers").select("*").eq("shop_id", uid).order("created_at", { ascending: false }),
+      sb.from("orders").select("*").eq("shop_id", uid).order("created_at", { ascending: false }),
+    ]);
 
-      const loaded = JSON.parse(raw);
+    if (shopRes.error) throw shopRes.error;
+    if (custRes.error) throw custRes.error;
+    if (orderRes.error) throw orderRes.error;
 
-      applyLoadedData(loaded);
+    database.shop = {
+      name: shopRes.data.name,
+      currency: shopRes.data.currency,
+      coverPhoto: publicPhotoUrl(shopRes.data.cover_photo_path),
+    };
+    database.customers = custRes.data.map(dbCustomerToLocal);
+    database.orders = orderRes.data.map(dbOrderToLocal);
+    database.meta.onboarded = shopRes.data.onboarded;
 
-      // Data saved by an older version of the app has no "onboarded" field.
-      // That means this phone was already set up — don't show onboarding to a returning tailor.
-      if (!loaded.meta || loaded.meta.onboarded === undefined) {
-        database.meta.onboarded = true;
+    await storageSet(STORAGE_KEY, JSON.stringify(database));
+
+  } catch (err) {
+
+    const raw = await storageGet(STORAGE_KEY);
+
+    if (raw) {
+
+      try {
+        applyLoadedData(JSON.parse(raw));
+        showToast("Offline — showing your last saved data");
+      } catch (e) {
+        showAlert("Couldn't load your data. Check your internet connection and reload the app.");
       }
 
-    } catch (err) {
+    } else {
 
-      // Saved data couldn't be read. Keep a copy so nothing is lost, then start fresh.
-      await storageSet(STORAGE_KEY + "_unreadable_copy", raw);
+      showAlert("Couldn't load your data. Check your internet connection and reload the app.");
 
     }
 
@@ -2085,11 +2170,26 @@ function handleCoverPhotoSelect(event) {
 
     confirmPhotoSheet("Use this cover photo?", dataUrl, "wide", async chosen => {
 
-      database.shop.coverPhoto = chosen;
+      const uid = currentSession.user.id;
 
-      await saveDatabase();
-      renderCoverPhoto();
-      showToast("Cover photo updated");
+      try {
+
+        const path = await uploadPhoto(chosen, "cover");
+
+        const { error } = await sb.from("shops").update({ cover_photo_path: path }).eq("id", uid);
+        if (error) throw error;
+
+        database.shop.coverPhoto = publicPhotoUrl(path);
+
+        await saveDatabase();
+        renderCoverPhoto();
+        showToast("Cover photo updated");
+
+      } catch (err) {
+
+        showToast("Couldn't upload the photo — check your internet and try again");
+
+      }
 
     });
 
@@ -2155,9 +2255,9 @@ function showConfirm(message, onYes, yesLabel = "Yes, remove") {
     </div>
   `);
 
-  document.getElementById("confirmYesBtn").onclick = () => {
+  document.getElementById("confirmYesBtn").onclick = async () => {
     closeModal();
-    onYes();
+    await onYes();
   };
 
 }
@@ -2249,13 +2349,25 @@ function show(screen) {
 async function saveOnboarding() {
 
   const name = onboardShopName.value.trim() || "Nyuzi House";
+  const uid = currentSession.user.id;
 
-  database.shop.name = name;
-  database.meta.onboarded = true;
+  try {
 
-  await saveDatabase();
-  applyShopBranding();
-  show("home");
+    const { error } = await sb.from("shops").update({ name, onboarded: true }).eq("id", uid);
+    if (error) throw error;
+
+    database.shop.name = name;
+    database.meta.onboarded = true;
+
+    await saveDatabase();
+    applyShopBranding();
+    show("home");
+
+  } catch (err) {
+
+    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
+
+  }
 
 }
 
@@ -2263,13 +2375,25 @@ async function saveSettings() {
 
   const name = settingsShopName.value.trim() || "Nyuzi House";
   const currency = settingsCurrency.value.trim() || "TSh";
+  const uid = currentSession.user.id;
 
-  database.shop = { ...database.shop, name, currency };
+  try {
 
-  await saveDatabase();
-  applyShopBranding();
-  showToast("Settings saved");
-  show("home");
+    const { error } = await sb.from("shops").update({ name, currency }).eq("id", uid);
+    if (error) throw error;
+
+    database.shop = { ...database.shop, name, currency };
+
+    await saveDatabase();
+    applyShopBranding();
+    showToast("Settings saved");
+    show("home");
+
+  } catch (err) {
+
+    showToast("Couldn't save to the cloud — check your internet and try again");
+
+  }
 
 }
 
@@ -2421,14 +2545,25 @@ function handleProfilePhotoSelect(event) {
 
     confirmPhotoSheet("Use this photo for " + customer.name + "?", dataUrl, "circle", async chosen => {
 
-      const target = database.customers.find(c => c.id === customerId);
-      if (!target) return;
+      try {
 
-      target.photo = chosen;
+        const path = await uploadPhoto(chosen, "customers");
 
-      await saveDatabase();
-      showToast("Photo updated");
-      openProfile(customerId);
+        const { error } = await sb.from("customers").update({ photo_path: path }).eq("id", customerId);
+        if (error) throw error;
+
+        const target = database.customers.find(c => c.id === customerId);
+        if (target) target.photo = publicPhotoUrl(path);
+
+        await saveDatabase();
+        showToast("Photo updated");
+        openProfile(customerId);
+
+      } catch (err) {
+
+        showToast("Couldn't upload the photo — check your internet and try again");
+
+      }
 
     });
 
@@ -2468,58 +2603,103 @@ async function saveCustomer() {
     return;
   }
 
-  if (editingCustomerId) {
+  const uid = currentSession.user.id;
 
-    const customer = database.customers.find(c => c.id === editingCustomerId);
+  try {
 
-    customer.name = name;
-    customer.phone = phone;
-    customer.location = newLocation.value.trim();
-    customer.pastOrders = pastOrders;
-    customer.notes = newNotes.value.trim();
-    customer.vip = newVip.checked;
-    customer.photo = selectedCustomerPhotoData;
+    // Only upload if a NEW photo was picked (a kept existing photo is already a URL, not a data: URI)
+    let photoPath;
+    if (selectedCustomerPhotoData && selectedCustomerPhotoData.startsWith("data:")) {
+      photoPath = await uploadPhoto(selectedCustomerPhotoData, "customers");
+    }
 
-    await saveDatabase();
-    showToast("Customer updated");
-    openProfile(customer.id);
+    if (editingCustomerId) {
 
-  } else {
+      const customer = database.customers.find(c => c.id === editingCustomerId);
 
-    const customer = {
-      id: Date.now().toString(),
-      name,
-      phone,
-      location: newLocation.value.trim(),
-      pastOrders,
-      notes: newNotes.value.trim(),
-      vip: newVip.checked,
-      photo: selectedCustomerPhotoData,
-      measurements: {}
-    };
+      const payload = {
+        name,
+        phone,
+        location: newLocation.value.trim(),
+        past_orders: pastOrders,
+        notes: newNotes.value.trim(),
+        vip: newVip.checked,
+      };
+      if (photoPath !== undefined) payload.photo_path = photoPath;
 
-    database.customers.unshift(customer);
+      const { error } = await sb.from("customers").update(payload).eq("id", editingCustomerId);
+      if (error) throw error;
 
-    if (firstGarment) {
+      customer.name = name;
+      customer.phone = phone;
+      customer.location = payload.location;
+      customer.pastOrders = pastOrders;
+      customer.notes = payload.notes;
+      customer.vip = payload.vip;
+      if (photoPath !== undefined) customer.photo = publicPhotoUrl(photoPath);
 
-      database.orders.unshift({
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-        customerId: customer.id,
-        garment: firstGarment,
-        price: firstPrice,
-        paid: firstPaid,
-        dueDate: firstDue,
-        stage: 0,
-        status: "In progress",
-        photo: selectedFirstOrderPhoto || null
-      });
+      await saveDatabase();
+      showToast("Customer updated");
+      openProfile(customer.id);
+
+    } else {
+
+      const payload = {
+        shop_id: uid,
+        name,
+        phone,
+        location: newLocation.value.trim(),
+        past_orders: pastOrders,
+        notes: newNotes.value.trim(),
+        vip: newVip.checked,
+        photo_path: photoPath || null,
+        measurements: {},
+      };
+
+      const { data, error } = await sb.from("customers").insert(payload).select().single();
+      if (error) throw error;
+
+      const customer = dbCustomerToLocal(data);
+      database.customers.unshift(customer);
+
+      let addedOrder = false;
+
+      if (firstGarment) {
+
+        let orderPhotoPath = null;
+        if (selectedFirstOrderPhoto) {
+          orderPhotoPath = await uploadPhoto(selectedFirstOrderPhoto, "orders");
+        }
+
+        const orderPayload = {
+          shop_id: uid,
+          customer_id: customer.id,
+          garment: firstGarment,
+          price: firstPrice,
+          paid: firstPaid,
+          due_date: firstDue || null,
+          stage: 0,
+          status: "In progress",
+          photo_path: orderPhotoPath,
+        };
+
+        const { data: orderRow, error: orderErr } = await sb.from("orders").insert(orderPayload).select().single();
+        if (orderErr) throw orderErr;
+
+        database.orders.unshift(dbOrderToLocal(orderRow));
+        addedOrder = true;
+
+      }
+
+      await saveDatabase();
+      openProfile(customer.id);
+      showCustomerSavedSheet(customer, addedOrder);
 
     }
 
-    await saveDatabase();
-    openProfile(customer.id);
-    showCustomerSavedSheet(customer, !!firstGarment);
+  } catch (err) {
+
+    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
 
   }
 
@@ -2543,12 +2723,23 @@ function deleteCustomer(id) {
 
   showConfirm("Remove this customer and their orders? This cannot be undone.", async () => {
 
-    database.customers = database.customers.filter(c => c.id !== id);
-    database.orders = database.orders.filter(o => o.customerId !== id);
+    try {
 
-    await saveDatabase();
-    showToast("Customer removed");
-    show("customers");
+      const { error } = await sb.from("customers").delete().eq("id", id);
+      if (error) throw error;
+
+      database.customers = database.customers.filter(c => c.id !== id);
+      database.orders = database.orders.filter(o => o.customerId !== id);
+
+      await saveDatabase();
+      showToast("Customer removed");
+      show("customers");
+
+    } catch (err) {
+
+      showToast("Couldn't remove — check your internet and try again");
+
+    }
 
   });
 
@@ -2782,14 +2973,31 @@ async function setOrderStage(orderId, stage) {
 
   if (orderStage(order) === stage) return;
 
+  const previousStage = order.stage;
+  const previousStatus = order.status;
+
   order.stage = stage;
   order.status = statusFromStage(stage);
 
-  await saveDatabase();
-
-  showToast(order.garment + ": " + STAGES[stage]);
-
   renderOrders();
+
+  try {
+
+    const { error } = await sb.from("orders").update({ stage, status: order.status }).eq("id", orderId);
+    if (error) throw error;
+
+    await saveDatabase();
+    showToast(order.garment + ": " + STAGES[stage]);
+
+  } catch (err) {
+
+    order.stage = previousStage;
+    order.status = previousStatus;
+    renderOrders();
+    showToast("Couldn't save — check your internet and try again");
+    return;
+
+  }
 
   // If this order is open in the details screen, keep it in step
   if (editingOrderId === orderId) {
@@ -3036,15 +3244,30 @@ async function saveMeasurements() {
     measurements[key] = (draft[key] || "").trim();
   });
 
-  if (!customer.measurements) customer.measurements = {};
-  customer.measurements[type] = measurements;
-  customer.lastMeasurementDate = measurements.date;
+  const updatedMeasurements = { ...(customer.measurements || {}), [type]: measurements };
 
-  delete measurementDrafts[type];
+  try {
 
-  await saveDatabase();
-  showToast(measurementTypeLabel(type) + " measurements saved");
-  openProfile(currentCustomer);
+    const { error } = await sb.from("customers")
+      .update({ measurements: updatedMeasurements, last_measurement_date: measurements.date })
+      .eq("id", customer.id);
+
+    if (error) throw error;
+
+    customer.measurements = updatedMeasurements;
+    customer.lastMeasurementDate = measurements.date;
+
+    delete measurementDrafts[type];
+
+    await saveDatabase();
+    showToast(measurementTypeLabel(type) + " measurements saved");
+    openProfile(currentCustomer);
+
+  } catch (err) {
+
+    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
+
+  }
 
 }
 
@@ -3262,35 +3485,78 @@ async function saveOrder() {
     return;
   }
 
-  const orderData = {
-    customerId,
-    garment,
-    price: Number(orderPrice.value) || 0,
-    paid: Number(orderPaid.value) || 0,
-    dueDate: orderDue.value || "",
-    stage: Number(orderStageSelect.value),
-    status: statusFromStage(Number(orderStageSelect.value)),
-    photo: selectedPhotoData || null
-  };
+  const uid = currentSession.user.id;
+  const stage = Number(orderStageSelect.value);
+  const status = statusFromStage(stage);
 
-  if (editingOrderId) {
+  try {
 
-    const order = database.orders.find(o => o.id === editingOrderId);
-    Object.assign(order, orderData);
+    let photoPath;
+    if (selectedPhotoData && selectedPhotoData.startsWith("data:")) {
+      photoPath = await uploadPhoto(selectedPhotoData, "orders");
+    }
 
-    await saveDatabase();
-    showToast("Order updated");
+    if (editingOrderId) {
 
-  } else {
+      const order = database.orders.find(o => o.id === editingOrderId);
 
-    database.orders.unshift({ id: Date.now().toString(), createdAt: new Date().toISOString(), ...orderData });
+      const payload = {
+        customer_id: customerId,
+        garment,
+        price: Number(orderPrice.value) || 0,
+        paid: Number(orderPaid.value) || 0,
+        due_date: orderDue.value || null,
+        stage,
+        status,
+      };
+      if (photoPath !== undefined) payload.photo_path = photoPath;
 
-    await saveDatabase();
-    showToast("Order saved");
+      const { error } = await sb.from("orders").update(payload).eq("id", editingOrderId);
+      if (error) throw error;
+
+      order.customerId = customerId;
+      order.garment = garment;
+      order.price = payload.price;
+      order.paid = payload.paid;
+      order.dueDate = orderDue.value || "";
+      order.stage = stage;
+      order.status = status;
+      if (photoPath !== undefined) order.photo = publicPhotoUrl(photoPath);
+
+      await saveDatabase();
+      showToast("Order updated");
+
+    } else {
+
+      const payload = {
+        shop_id: uid,
+        customer_id: customerId,
+        garment,
+        price: Number(orderPrice.value) || 0,
+        paid: Number(orderPaid.value) || 0,
+        due_date: orderDue.value || null,
+        stage,
+        status,
+        photo_path: photoPath || null,
+      };
+
+      const { data, error } = await sb.from("orders").insert(payload).select().single();
+      if (error) throw error;
+
+      database.orders.unshift(dbOrderToLocal(data));
+
+      await saveDatabase();
+      showToast("Order saved");
+
+    }
+
+    show("orders");
+
+  } catch (err) {
+
+    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
 
   }
-
-  show("orders");
 
 }
 
@@ -3298,11 +3564,22 @@ function deleteOrder() {
 
   showConfirm("Remove this order? This cannot be undone.", async () => {
 
-    database.orders = database.orders.filter(o => o.id !== editingOrderId);
+    try {
 
-    await saveDatabase();
-    showToast("Order removed");
-    show("orders");
+      const { error } = await sb.from("orders").delete().eq("id", editingOrderId);
+      if (error) throw error;
+
+      database.orders = database.orders.filter(o => o.id !== editingOrderId);
+
+      await saveDatabase();
+      showToast("Order removed");
+      show("orders");
+
+    } catch (err) {
+
+      showToast("Couldn't remove — check your internet and try again");
+
+    }
 
   });
 
