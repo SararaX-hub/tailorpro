@@ -1466,29 +1466,6 @@ button, a.btn, a.quickcell {
       <label for="newVip">Mark as VIP customer</label>
     </div>
 
-    <div id="firstOrderSection">
-
-      <div class="group-title">First order (optional)</div>
-
-      <label>GARMENT</label>
-      <input id="firstOrderGarment" placeholder="e.g. Two-piece suit">
-
-      <label>PRICE (<span class="curr">TSh</span>)</label>
-      <input id="firstOrderPrice" inputmode="numeric" placeholder="e.g. 350000">
-
-      <label>AMOUNT PAID SO FAR (<span class="curr">TSh</span>)</label>
-      <input id="firstOrderPaid" inputmode="numeric" placeholder="e.g. 100000">
-
-      <label>DUE DATE</label>
-      <input id="firstOrderDue" type="date">
-
-      <label>PHOTO (OPTIONAL)</label>
-      <input id="firstOrderPhotoInput" type="file" accept="image/*" onchange="handleFirstOrderPhotoSelect(event)">
-      <img id="firstOrderPhotoPreview" class="order-photo" style="display:none">
-      <button id="firstOrderPhotoRemove" class="btn secondary" style="display:none; margin-top:8px" onclick="clearFirstOrderPhoto()">Remove photo</button>
-
-    </div>
-
     <br>
 
     <button class="btn" onclick="saveCustomer()" id="customerSaveBtn">Save customer</button>
@@ -1964,7 +1941,7 @@ let dbReady = false;
 let selectedPhotoData = null;
 let customerPickMode = null;
 let pendingPickMode = null;
-let selectedFirstOrderPhoto = null;
+let measurementsNextStep = null;   // "order" right after adding a new customer, otherwise back to their profile
 let selectedCustomerPhotoData = null;
 let measurementDrafts = {};
 
@@ -2455,13 +2432,6 @@ function newCustomer() {
   newNotes.value = "";
   newVip.checked = false;
 
-  firstOrderGarment.value = "";
-  firstOrderPrice.value = "";
-  firstOrderPaid.value = "";
-  firstOrderDue.value = "";
-  clearFirstOrderPhoto();
-  firstOrderSection.style.display = "block";
-
   customerPhotoPicker.innerHTML = `📷<span>Add Photo</span>`;
 
   show("newCustomer");
@@ -2485,8 +2455,6 @@ function editCustomer(id) {
   newOrderCount.value = customer.pastOrders || "";
   newNotes.value = customer.notes || "";
   newVip.checked = !!customer.vip;
-
-  firstOrderSection.style.display = "none";
 
   customerPhotoPicker.innerHTML = customer.photo
     ? `<img src="${customer.photo}">`
@@ -2593,16 +2561,6 @@ async function saveCustomer() {
 
   const pastOrders = Math.max(0, parseInt(newOrderCount.value, 10) || 0);
 
-  const firstGarment = firstOrderGarment.value.trim();
-  const firstPrice = Number(firstOrderPrice.value) || 0;
-  const firstPaid = Number(firstOrderPaid.value) || 0;
-  const firstDue = firstOrderDue.value || "";
-
-  if (!editingCustomerId && !firstGarment && (firstPrice || firstPaid || firstDue || selectedFirstOrderPhoto)) {
-    showAlert("Type the garment for the first order, or clear the order details.");
-    return;
-  }
-
   const uid = currentSession.user.id;
 
   try {
@@ -2662,38 +2620,13 @@ async function saveCustomer() {
       const customer = dbCustomerToLocal(data);
       database.customers.unshift(customer);
 
-      let addedOrder = false;
-
-      if (firstGarment) {
-
-        let orderPhotoPath = null;
-        if (selectedFirstOrderPhoto) {
-          orderPhotoPath = await uploadPhoto(selectedFirstOrderPhoto, "orders");
-        }
-
-        const orderPayload = {
-          shop_id: uid,
-          customer_id: customer.id,
-          garment: firstGarment,
-          price: firstPrice,
-          paid: firstPaid,
-          due_date: firstDue || null,
-          stage: 0,
-          status: "In progress",
-          photo_path: orderPhotoPath,
-        };
-
-        const { data: orderRow, error: orderErr } = await sb.from("orders").insert(orderPayload).select().single();
-        if (orderErr) throw orderErr;
-
-        database.orders.unshift(dbOrderToLocal(orderRow));
-        addedOrder = true;
-
-      }
-
       await saveDatabase();
-      openProfile(customer.id);
-      showCustomerSavedSheet(customer, addedOrder);
+
+      // Smooth flow: a brand new customer goes straight into measurements,
+      // then straight into a new order — no extra taps in between.
+      currentCustomer = customer.id;
+      measurementsNextStep = "order";
+      openMeasurements("suit");
 
     }
 
@@ -2702,20 +2635,6 @@ async function saveCustomer() {
     showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
 
   }
-
-}
-
-function showCustomerSavedSheet(customer, addedOrder) {
-
-  openModalHtml(`
-    <div style="text-align:center">
-      <div class="success-check">✓</div>
-      <p><b>${escapeHtml(customer.name)} is saved</b></p>
-      <p class="muted" style="margin-top:4px">${addedOrder ? "Their first order is added too. " : ""}Next step: take their measurements.</p>
-    </div>
-    <button class="btn" style="margin-top:18px" onclick="closeModal(); openMeasurements('suit')">📏 Take measurements now</button>
-    <button class="btn secondary" style="margin-top:10px" onclick="closeModal()">Later</button>
-  `);
 
 }
 
@@ -3205,7 +3124,7 @@ function renderMeasurements() {
         <div class="measurements">
           ${group.fields.map(([key, label]) => `
             <div>
-              <label>${label.toUpperCase()} (CM)</label>
+              <label>${label.toUpperCase()} (IN)</label>
               <input id="m_${key}" inputmode="decimal" value="${escapeAttr(m[key] || "")}">
             </div>
           `).join("")}
@@ -3261,7 +3180,13 @@ async function saveMeasurements() {
 
     await saveDatabase();
     showToast(measurementTypeLabel(type) + " measurements saved");
-    openProfile(currentCustomer);
+
+    if (measurementsNextStep === "order") {
+      measurementsNextStep = null;
+      newOrderForCustomer(currentCustomer);
+    } else {
+      openProfile(currentCustomer);
+    }
 
   } catch (err) {
 
@@ -3280,7 +3205,7 @@ function shareMeasurements() {
 
   const lines = measurementFieldList(type)
     .filter(([key]) => (draft[key] || "").trim() !== "")
-    .map(([key, label]) => `${label}: ${draft[key].trim()} cm`);
+    .map(([key, label]) => `${label}: ${draft[key].trim()} in`);
 
   if (!lines.length) {
     showAlert("Add some measurements first, then share.");
@@ -3429,32 +3354,6 @@ function clearOrderPhoto() {
   selectedPhotoData = null;
   orderPhotoPreview.style.display = "none";
   orderPhotoRemove.style.display = "none";
-
-}
-
-function handleFirstOrderPhotoSelect(event) {
-
-  const file = event.target.files[0];
-  event.target.value = "";
-
-  if (!file) return;
-
-  readAndCompressImage(file, 700, 0.6, dataUrl => {
-
-    selectedFirstOrderPhoto = dataUrl;
-    firstOrderPhotoPreview.src = dataUrl;
-    firstOrderPhotoPreview.style.display = "block";
-    firstOrderPhotoRemove.style.display = "block";
-
-  });
-
-}
-
-function clearFirstOrderPhoto() {
-
-  selectedFirstOrderPhoto = null;
-  firstOrderPhotoPreview.style.display = "none";
-  firstOrderPhotoRemove.style.display = "none";
 
 }
 
