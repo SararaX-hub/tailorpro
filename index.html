@@ -2622,11 +2622,8 @@ async function saveCustomer() {
 
       await saveDatabase();
 
-      // Smooth flow: a brand new customer goes straight into measurements,
-      // then straight into a new order — no extra taps in between.
       currentCustomer = customer.id;
-      measurementsNextStep = "order";
-      openMeasurements("suit");
+      showCustomerSavedSheet(customer);
 
     }
 
@@ -2635,6 +2632,29 @@ async function saveCustomer() {
     showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
 
   }
+
+}
+
+function showCustomerSavedSheet(customer) {
+
+  openModalHtml(`
+    <div style="text-align:center">
+      <div class="success-check">✓</div>
+      <p><b>${escapeHtml(customer.name)} is saved</b></p>
+      <p class="muted" style="margin-top:4px">Next step: take their measurements.</p>
+    </div>
+    <button class="btn" style="margin-top:18px" onclick="closeModal(); startMeasurementsChain()">📏 Take measurements now</button>
+    <button class="btn secondary" style="margin-top:10px" onclick="closeModal(); openProfile(currentCustomer)">Later</button>
+  `);
+
+}
+
+// Tapping "Take measurements now": go into measurements, then straight into
+// a new order afterward — the tap-through sheet is the only extra step.
+function startMeasurementsChain() {
+
+  measurementsNextStep = "order";
+  openMeasurements("suit");
 
 }
 
