@@ -819,6 +819,24 @@ button, a.btn, a.quickcell {
   font-weight: 600;
 }
 
+.sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-bottom: 4px;
+}
+
+.sync-pill.warn {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
 .context-card {
   background: var(--primary-light);
   border-radius: 16px;
@@ -1371,6 +1389,7 @@ button, a.btn, a.quickcell {
 
   </div>
 
+  <div id="syncStatusHome"></div>
   <div id="installNudge"></div>
   <div id="backupNudge"></div>
 
@@ -1594,7 +1613,10 @@ button, a.btn, a.quickcell {
     <button class="btn secondary" onclick="showInstallHelp()">Install on this phone</button>
   </div>
 
-  <button class="btn danger" style="margin-top:12px" onclick="logout()">Log out</button>
+  <div id="syncStatusSettings" style="margin-top:20px"></div>
+  <button class="btn secondary" style="margin-top:10px" onclick="manualSync()">Sync now</button>
+
+  <button class="btn danger" style="margin-top:20px" onclick="logout()">Log out</button>
 
   <p class="muted" style="text-align:center; margin-top:30px">from Nyuzi House</p>
 
@@ -1844,6 +1866,234 @@ function dbOrderToLocal(row) {
 
 
 /* -----------------------------
+   OFFLINE SYNC QUEUE
+   Every change is applied to this phone immediately, then queued here to send
+   to the cloud. Queued items are tried in the order they were made (so e.g.
+   a new customer always reaches the cloud before an order that depends on
+   them), and are retried automatically once there's a connection again.
+----------------------------- */
+
+const QUEUE_KEY = "pending_queue";
+const QUEUE_WARN_THRESHOLD = 30;
+const MAX_SYNC_ATTEMPTS = 5;
+let SYNC_RETRY_COOLDOWN_MS = 3000;   // don't re-try the same stuck item more than once this often
+function __setSyncCooldownForTests(ms) { SYNC_RETRY_COOLDOWN_MS = ms; }
+
+let syncQueue = [];
+let queueLoaded = false;
+let syncPaused = false;
+
+function genId() {
+
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+
+  // Fallback for older browsers: good enough to be unique, not cryptographically strict.
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+
+}
+
+async function ensureQueueLoaded() {
+
+  if (queueLoaded) return;
+
+  const raw = await storageGet(QUEUE_KEY);
+  syncQueue = raw ? JSON.parse(raw) : [];
+  queueLoaded = true;
+
+}
+
+async function persistQueue() {
+
+  await storageSet(QUEUE_KEY, JSON.stringify(syncQueue));
+  renderSyncStatus();
+
+}
+
+// Call this right after applying a change locally. Fire-and-forget: it queues
+// the change and kicks off a sync attempt in the background, but never makes
+// the person wait for the network.
+async function enqueue(op) {
+
+  await ensureQueueLoaded();
+
+  syncQueue.push({ ...op, attempts: 0, queuedAt: Date.now() });
+
+  await persistQueue();
+
+  attemptSync();
+
+}
+
+// Not awaited at most call sites on purpose (changes must never wait on the
+// network) — but if a sync cycle is already running, later callers that DO
+// want to know when it finishes (like loadDatabase, or the test suite) get
+// back that SAME in-flight promise instead of a silent no-op.
+let syncCyclePromise = null;
+
+function attemptSync() {
+
+  if (syncPaused) return Promise.resolve();
+  if (syncCyclePromise) return syncCyclePromise;
+
+  syncCyclePromise = runSyncCycle().finally(() => { syncCyclePromise = null; });
+
+  return syncCyclePromise;
+
+}
+
+async function runSyncCycle() {
+
+  await ensureQueueLoaded();
+
+  while (syncQueue.length) {
+
+    const op = syncQueue[0];
+
+    // Several changes made in quick succession while offline shouldn't each
+    // count as a separate failed "attempt" against the same stuck item —
+    // that would exhaust the retry budget in seconds during normal offline use.
+    if (op.lastAttemptAt && Date.now() - op.lastAttemptAt < SYNC_RETRY_COOLDOWN_MS) {
+      break;
+    }
+
+    op.lastAttemptAt = Date.now();
+
+    const result = await runQueuedOp(op);
+
+    if (result.ok) {
+      syncQueue.shift();
+      await persistQueue();
+      continue;
+    }
+
+    // A real rejection from the server (bad data, no permission) won't fix
+    // itself by retrying — count it, and eventually ask the person to look.
+    // A plain network failure (simply offline) never counts: it keeps
+    // retrying quietly, however long that takes, which is the whole point.
+    if (result.isServerError) {
+
+      op.attempts = (op.attempts || 0) + 1;
+
+      if (op.attempts >= MAX_SYNC_ATTEMPTS) {
+
+        syncPaused = true;
+        await persistQueue();
+        showAlert("Couldn't sync a change after several tries. Check your connection, then go to Settings and tap Sync Now.");
+        break;
+
+      }
+
+    }
+
+    await persistQueue();
+    break;   // likely just offline — stop for now, a later trigger will retry
+
+  }
+
+  renderSyncStatus();
+
+}
+
+async function manualSync() {
+
+  syncPaused = false;
+  await attemptSync();
+
+  if (!syncQueue.length) showToast("Everything is synced");
+
+}
+
+// Returns { ok } on success, or { ok: false, isServerError } on failure.
+// isServerError distinguishes a real rejection from Supabase (bad data,
+// no permission — retrying won't help, the person needs to know) from a
+// plain network failure (no connection — completely normal while offline,
+// and should keep retrying quietly for as long as it takes, never alerting).
+async function runQueuedOp(op) {
+
+  try {
+
+    if (op.kind === "upsert") {
+
+      const { error } = op.isInsert
+        ? await sb.from(op.table).insert(op.payload)
+        : await sb.from(op.table).update(op.payload).eq("id", op.rowId);
+
+      if (error) throw error;
+
+    } else if (op.kind === "delete") {
+
+      const { error } = await sb.from(op.table).delete().eq("id", op.rowId);
+      if (error) throw error;
+
+    } else if (op.kind === "photo") {
+
+      const path = await uploadPhoto(op.dataUrl, op.folder);
+
+      const { error } = await sb.from(op.table).update({ [op.column]: path }).eq("id", op.rowId);
+      if (error) throw error;
+
+      applyPhotoLocally(op.localRef, path);
+
+    }
+
+    return { ok: true };
+
+  } catch (err) {
+
+    const isServerError = !!(err && (err.code || err.details || err.hint));
+
+    return { ok: false, isServerError };
+
+  }
+
+}
+
+function applyPhotoLocally(ref, path) {
+
+  const url = publicPhotoUrl(path);
+
+  if (ref.type === "customer") {
+    const c = database.customers.find(x => x.id === ref.id);
+    if (c) c.photo = url;
+  } else if (ref.type === "order") {
+    const o = database.orders.find(x => x.id === ref.id);
+    if (o) o.photo = url;
+  } else if (ref.type === "shop") {
+    database.shop.coverPhoto = url;
+  }
+
+  saveDatabase();
+
+}
+
+function renderSyncStatus() {
+
+  const n = syncQueue.length;
+  const warn = n >= QUEUE_WARN_THRESHOLD || syncPaused;
+
+  const html = n === 0 ? "" : `
+    <div class="sync-pill ${warn ? "warn" : ""}">
+      ${warn ? "⚠️" : "🔄"} ${n} change${n === 1 ? "" : "s"} waiting to sync
+    </div>
+  `;
+
+  const home = document.getElementById("syncStatusHome");
+  const settings = document.getElementById("syncStatusSettings");
+
+  if (home) home.innerHTML = html;
+  if (settings) settings.innerHTML = html || `<div class="sync-pill">✓ Everything is synced</div>`;
+
+}
+
+window.addEventListener("online", () => { syncPaused = false; attemptSync(); });
+setInterval(() => attemptSync(), 30000);
+
+
+/* -----------------------------
    STORAGE (an offline cache on this phone: IndexedDB, with localStorage as a fallback)
 ----------------------------- */
 
@@ -2011,6 +2261,47 @@ async function loadDatabase() {
 
   const uid = currentSession.user.id;
 
+  // Try to send anything still waiting from a previous session first. If
+  // something is still unsynced after this (still offline, or paused), the
+  // cloud fetch below would clobber it — so load the local copy instead.
+  await ensureQueueLoaded();
+  await attemptSync();
+
+  if (syncQueue.length > 0) {
+
+    const raw = await storageGet(STORAGE_KEY);
+
+    if (raw) {
+
+      try {
+        applyLoadedData(JSON.parse(raw));
+        showToast("You have changes waiting to sync — showing your local copy");
+      } catch (e) {
+        showAlert("Couldn't load your data. Check your internet connection and reload the app.");
+      }
+
+    } else {
+
+      showAlert("Couldn't load your data. Check your internet connection and reload the app.");
+
+    }
+
+    dbReady = true;
+    applyShopBranding();
+    document.getElementById("loading").classList.remove("active");
+    renderSyncStatus();
+
+    if (database.meta.onboarded) {
+      show("home");
+    } else {
+      onboardShopName.value = "";
+      show("onboarding");
+    }
+
+    return;
+
+  }
+
   try {
 
     const [shopRes, custRes, orderRes] = await Promise.all([
@@ -2149,24 +2440,14 @@ function handleCoverPhotoSelect(event) {
 
       const uid = currentSession.user.id;
 
-      try {
+      database.shop.coverPhoto = chosen;   // shows immediately, even offline
 
-        const path = await uploadPhoto(chosen, "cover");
+      await saveDatabase();
+      renderCoverPhoto();
 
-        const { error } = await sb.from("shops").update({ cover_photo_path: path }).eq("id", uid);
-        if (error) throw error;
+      await enqueue({ kind: "photo", table: "shops", rowId: uid, column: "cover_photo_path", dataUrl: chosen, folder: "cover", localRef: { type: "shop" } });
 
-        database.shop.coverPhoto = publicPhotoUrl(path);
-
-        await saveDatabase();
-        renderCoverPhoto();
-        showToast("Cover photo updated");
-
-      } catch (err) {
-
-        showToast("Couldn't upload the photo — check your internet and try again");
-
-      }
+      showToast("Cover photo updated");
 
     });
 
@@ -2307,12 +2588,14 @@ function show(screen) {
   if (screen === "home") {
     renderInstallNudge();
     renderBackupNudge();
+    renderSyncStatus();
   }
 
   if (screen === "settings") {
     settingsShopName.value = database.shop.name || "";
     settingsCurrency.value = database.shop.currency || "TSh";
     renderBackupStatus();
+    renderSyncStatus();
     settingsInstallWrap.style.display = isStandalone() ? "none" : "block";
   }
 
@@ -2328,23 +2611,14 @@ async function saveOnboarding() {
   const name = onboardShopName.value.trim() || "Nyuzi House";
   const uid = currentSession.user.id;
 
-  try {
+  database.shop.name = name;
+  database.meta.onboarded = true;
 
-    const { error } = await sb.from("shops").update({ name, onboarded: true }).eq("id", uid);
-    if (error) throw error;
+  await saveDatabase();
+  await enqueue({ kind: "upsert", table: "shops", isInsert: false, rowId: uid, payload: { name, onboarded: true } });
 
-    database.shop.name = name;
-    database.meta.onboarded = true;
-
-    await saveDatabase();
-    applyShopBranding();
-    show("home");
-
-  } catch (err) {
-
-    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
-
-  }
+  applyShopBranding();
+  show("home");
 
 }
 
@@ -2354,23 +2628,14 @@ async function saveSettings() {
   const currency = settingsCurrency.value.trim() || "TSh";
   const uid = currentSession.user.id;
 
-  try {
+  database.shop = { ...database.shop, name, currency };
 
-    const { error } = await sb.from("shops").update({ name, currency }).eq("id", uid);
-    if (error) throw error;
+  await saveDatabase();
+  await enqueue({ kind: "upsert", table: "shops", isInsert: false, rowId: uid, payload: { name, currency } });
 
-    database.shop = { ...database.shop, name, currency };
-
-    await saveDatabase();
-    applyShopBranding();
-    showToast("Settings saved");
-    show("home");
-
-  } catch (err) {
-
-    showToast("Couldn't save to the cloud — check your internet and try again");
-
-  }
+  applyShopBranding();
+  showToast("Settings saved");
+  show("home");
 
 }
 
@@ -2513,25 +2778,15 @@ function handleProfilePhotoSelect(event) {
 
     confirmPhotoSheet("Use this photo for " + customer.name + "?", dataUrl, "circle", async chosen => {
 
-      try {
+      const target = database.customers.find(c => c.id === customerId);
+      if (target) target.photo = chosen;   // shows immediately, even offline
 
-        const path = await uploadPhoto(chosen, "customers");
+      await saveDatabase();
 
-        const { error } = await sb.from("customers").update({ photo_path: path }).eq("id", customerId);
-        if (error) throw error;
+      await enqueue({ kind: "photo", table: "customers", rowId: customerId, column: "photo_path", dataUrl: chosen, folder: "customers", localRef: { type: "customer", id: customerId } });
 
-        const target = database.customers.find(c => c.id === customerId);
-        if (target) target.photo = publicPhotoUrl(path);
-
-        await saveDatabase();
-        showToast("Photo updated");
-        openProfile(customerId);
-
-      } catch (err) {
-
-        showToast("Couldn't upload the photo — check your internet and try again");
-
-      }
+      showToast("Photo updated");
+      openProfile(customerId);
 
     });
 
@@ -2560,76 +2815,75 @@ async function saveCustomer() {
   }
 
   const pastOrders = Math.max(0, parseInt(newOrderCount.value, 10) || 0);
-
   const uid = currentSession.user.id;
 
-  try {
+  // A newly PICKED photo is a data: URI; a kept existing one is already a URL.
+  const hasNewPhoto = selectedCustomerPhotoData && selectedCustomerPhotoData.startsWith("data:");
 
-    // Only upload if a NEW photo was picked (a kept existing photo is already a URL, not a data: URI)
-    let photoPath;
-    if (selectedCustomerPhotoData && selectedCustomerPhotoData.startsWith("data:")) {
-      photoPath = await uploadPhoto(selectedCustomerPhotoData, "customers");
+  if (editingCustomerId) {
+
+    const customer = database.customers.find(c => c.id === editingCustomerId);
+
+    const payload = {
+      name,
+      phone,
+      location: newLocation.value.trim(),
+      past_orders: pastOrders,
+      notes: newNotes.value.trim(),
+      vip: newVip.checked,
+    };
+
+    customer.name = name;
+    customer.phone = phone;
+    customer.location = payload.location;
+    customer.pastOrders = pastOrders;
+    customer.notes = payload.notes;
+    customer.vip = payload.vip;
+
+    if (hasNewPhoto) {
+      customer.photo = selectedCustomerPhotoData;   // shows immediately, even offline
+      await enqueue({ kind: "photo", table: "customers", rowId: editingCustomerId, column: "photo_path", dataUrl: selectedCustomerPhotoData, folder: "customers", localRef: { type: "customer", id: editingCustomerId } });
     }
 
-    if (editingCustomerId) {
+    await saveDatabase();
+    await enqueue({ kind: "upsert", table: "customers", isInsert: false, rowId: editingCustomerId, payload });
 
-      const customer = database.customers.find(c => c.id === editingCustomerId);
+    showToast("Customer updated");
+    openProfile(customer.id);
 
-      const payload = {
-        name,
-        phone,
-        location: newLocation.value.trim(),
-        past_orders: pastOrders,
-        notes: newNotes.value.trim(),
-        vip: newVip.checked,
-      };
-      if (photoPath !== undefined) payload.photo_path = photoPath;
+  } else {
 
-      const { error } = await sb.from("customers").update(payload).eq("id", editingCustomerId);
-      if (error) throw error;
+    const customerId = genId();
 
-      customer.name = name;
-      customer.phone = phone;
-      customer.location = payload.location;
-      customer.pastOrders = pastOrders;
-      customer.notes = payload.notes;
-      customer.vip = payload.vip;
-      if (photoPath !== undefined) customer.photo = publicPhotoUrl(photoPath);
+    const payload = {
+      id: customerId,
+      shop_id: uid,
+      name,
+      phone,
+      location: newLocation.value.trim(),
+      past_orders: pastOrders,
+      notes: newNotes.value.trim(),
+      vip: newVip.checked,
+      photo_path: null,
+      measurements: {},
+    };
 
-      await saveDatabase();
-      showToast("Customer updated");
-      openProfile(customer.id);
+    const customer = dbCustomerToLocal({ ...payload, created_at: new Date().toISOString() });
+    if (hasNewPhoto) customer.photo = selectedCustomerPhotoData;
 
-    } else {
+    database.customers.unshift(customer);
+    await saveDatabase();
 
-      const payload = {
-        shop_id: uid,
-        name,
-        phone,
-        location: newLocation.value.trim(),
-        past_orders: pastOrders,
-        notes: newNotes.value.trim(),
-        vip: newVip.checked,
-        photo_path: photoPath || null,
-        measurements: {},
-      };
+    // The insert MUST be queued before the photo update, so if sync ever
+    // races ahead while offline, the row exists before anything updates it.
+    await enqueue({ kind: "upsert", table: "customers", isInsert: true, payload });
 
-      const { data, error } = await sb.from("customers").insert(payload).select().single();
-      if (error) throw error;
-
-      const customer = dbCustomerToLocal(data);
-      database.customers.unshift(customer);
-
-      await saveDatabase();
-
-      currentCustomer = customer.id;
-      showCustomerSavedSheet(customer);
-
+    if (hasNewPhoto) {
+      await enqueue({ kind: "photo", table: "customers", rowId: customerId, column: "photo_path", dataUrl: selectedCustomerPhotoData, folder: "customers", localRef: { type: "customer", id: customerId } });
     }
 
-  } catch (err) {
-
-    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
+    currentCustomer = customer.id;
+    showCustomerSavedSheet(customer);
 
   }
 
@@ -2662,23 +2916,14 @@ function deleteCustomer(id) {
 
   showConfirm("Remove this customer and their orders? This cannot be undone.", async () => {
 
-    try {
+    database.customers = database.customers.filter(c => c.id !== id);
+    database.orders = database.orders.filter(o => o.customerId !== id);
 
-      const { error } = await sb.from("customers").delete().eq("id", id);
-      if (error) throw error;
+    await saveDatabase();
+    await enqueue({ kind: "delete", table: "customers", rowId: id });
 
-      database.customers = database.customers.filter(c => c.id !== id);
-      database.orders = database.orders.filter(o => o.customerId !== id);
-
-      await saveDatabase();
-      showToast("Customer removed");
-      show("customers");
-
-    } catch (err) {
-
-      showToast("Couldn't remove — check your internet and try again");
-
-    }
+    showToast("Customer removed");
+    show("customers");
 
   });
 
@@ -2912,31 +3157,15 @@ async function setOrderStage(orderId, stage) {
 
   if (orderStage(order) === stage) return;
 
-  const previousStage = order.stage;
-  const previousStatus = order.status;
-
   order.stage = stage;
   order.status = statusFromStage(stage);
 
   renderOrders();
 
-  try {
+  await saveDatabase();
+  await enqueue({ kind: "upsert", table: "orders", isInsert: false, rowId: orderId, payload: { stage, status: order.status } });
 
-    const { error } = await sb.from("orders").update({ stage, status: order.status }).eq("id", orderId);
-    if (error) throw error;
-
-    await saveDatabase();
-    showToast(order.garment + ": " + STAGES[stage]);
-
-  } catch (err) {
-
-    order.stage = previousStage;
-    order.status = previousStatus;
-    renderOrders();
-    showToast("Couldn't save — check your internet and try again");
-    return;
-
-  }
+  showToast(order.garment + ": " + STAGES[stage]);
 
   // If this order is open in the details screen, keep it in step
   if (editingOrderId === orderId) {
@@ -3185,33 +3414,21 @@ async function saveMeasurements() {
 
   const updatedMeasurements = { ...(customer.measurements || {}), [type]: measurements };
 
-  try {
+  customer.measurements = updatedMeasurements;
+  customer.lastMeasurementDate = measurements.date;
 
-    const { error } = await sb.from("customers")
-      .update({ measurements: updatedMeasurements, last_measurement_date: measurements.date })
-      .eq("id", customer.id);
+  delete measurementDrafts[type];
 
-    if (error) throw error;
+  await saveDatabase();
+  await enqueue({ kind: "upsert", table: "customers", isInsert: false, rowId: customer.id, payload: { measurements: updatedMeasurements, last_measurement_date: measurements.date } });
 
-    customer.measurements = updatedMeasurements;
-    customer.lastMeasurementDate = measurements.date;
+  showToast(measurementTypeLabel(type) + " measurements saved");
 
-    delete measurementDrafts[type];
-
-    await saveDatabase();
-    showToast(measurementTypeLabel(type) + " measurements saved");
-
-    if (measurementsNextStep === "order") {
-      measurementsNextStep = null;
-      newOrderForCustomer(currentCustomer);
-    } else {
-      openProfile(currentCustomer);
-    }
-
-  } catch (err) {
-
-    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
-
+  if (measurementsNextStep === "order") {
+    measurementsNextStep = null;
+    newOrderForCustomer(currentCustomer);
+  } else {
+    openProfile(currentCustomer);
   }
 
 }
@@ -3407,75 +3624,74 @@ async function saveOrder() {
   const uid = currentSession.user.id;
   const stage = Number(orderStageSelect.value);
   const status = statusFromStage(stage);
+  const hasNewPhoto = selectedPhotoData && selectedPhotoData.startsWith("data:");
 
-  try {
+  if (editingOrderId) {
 
-    let photoPath;
-    if (selectedPhotoData && selectedPhotoData.startsWith("data:")) {
-      photoPath = await uploadPhoto(selectedPhotoData, "orders");
+    const order = database.orders.find(o => o.id === editingOrderId);
+
+    const payload = {
+      customer_id: customerId,
+      garment,
+      price: Number(orderPrice.value) || 0,
+      paid: Number(orderPaid.value) || 0,
+      due_date: orderDue.value || null,
+      stage,
+      status,
+    };
+
+    order.customerId = customerId;
+    order.garment = garment;
+    order.price = payload.price;
+    order.paid = payload.paid;
+    order.dueDate = orderDue.value || "";
+    order.stage = stage;
+    order.status = status;
+
+    if (hasNewPhoto) {
+      order.photo = selectedPhotoData;
+      await enqueue({ kind: "photo", table: "orders", rowId: editingOrderId, column: "photo_path", dataUrl: selectedPhotoData, folder: "orders", localRef: { type: "order", id: editingOrderId } });
     }
 
-    if (editingOrderId) {
+    await saveDatabase();
+    await enqueue({ kind: "upsert", table: "orders", isInsert: false, rowId: editingOrderId, payload });
 
-      const order = database.orders.find(o => o.id === editingOrderId);
+    showToast("Order updated");
 
-      const payload = {
-        customer_id: customerId,
-        garment,
-        price: Number(orderPrice.value) || 0,
-        paid: Number(orderPaid.value) || 0,
-        due_date: orderDue.value || null,
-        stage,
-        status,
-      };
-      if (photoPath !== undefined) payload.photo_path = photoPath;
+  } else {
 
-      const { error } = await sb.from("orders").update(payload).eq("id", editingOrderId);
-      if (error) throw error;
+    const orderId = genId();
 
-      order.customerId = customerId;
-      order.garment = garment;
-      order.price = payload.price;
-      order.paid = payload.paid;
-      order.dueDate = orderDue.value || "";
-      order.stage = stage;
-      order.status = status;
-      if (photoPath !== undefined) order.photo = publicPhotoUrl(photoPath);
+    const payload = {
+      id: orderId,
+      shop_id: uid,
+      customer_id: customerId,
+      garment,
+      price: Number(orderPrice.value) || 0,
+      paid: Number(orderPaid.value) || 0,
+      due_date: orderDue.value || null,
+      stage,
+      status,
+      photo_path: null,
+    };
 
-      await saveDatabase();
-      showToast("Order updated");
+    const order = dbOrderToLocal({ ...payload, created_at: new Date().toISOString() });
+    if (hasNewPhoto) order.photo = selectedPhotoData;
 
-    } else {
+    database.orders.unshift(order);
+    await saveDatabase();
 
-      const payload = {
-        shop_id: uid,
-        customer_id: customerId,
-        garment,
-        price: Number(orderPrice.value) || 0,
-        paid: Number(orderPaid.value) || 0,
-        due_date: orderDue.value || null,
-        stage,
-        status,
-        photo_path: photoPath || null,
-      };
+    await enqueue({ kind: "upsert", table: "orders", isInsert: true, payload });
 
-      const { data, error } = await sb.from("orders").insert(payload).select().single();
-      if (error) throw error;
-
-      database.orders.unshift(dbOrderToLocal(data));
-
-      await saveDatabase();
-      showToast("Order saved");
-
+    if (hasNewPhoto) {
+      await enqueue({ kind: "photo", table: "orders", rowId: orderId, column: "photo_path", dataUrl: selectedPhotoData, folder: "orders", localRef: { type: "order", id: orderId } });
     }
 
-    show("orders");
-
-  } catch (err) {
-
-    showAlert("Couldn't save to the cloud. Check your internet connection and try again.");
+    showToast("Order saved");
 
   }
+
+  show("orders");
 
 }
 
@@ -3483,22 +3699,13 @@ function deleteOrder() {
 
   showConfirm("Remove this order? This cannot be undone.", async () => {
 
-    try {
+    database.orders = database.orders.filter(o => o.id !== editingOrderId);
 
-      const { error } = await sb.from("orders").delete().eq("id", editingOrderId);
-      if (error) throw error;
+    await saveDatabase();
+    await enqueue({ kind: "delete", table: "orders", rowId: editingOrderId });
 
-      database.orders = database.orders.filter(o => o.id !== editingOrderId);
-
-      await saveDatabase();
-      showToast("Order removed");
-      show("orders");
-
-    } catch (err) {
-
-      showToast("Couldn't remove — check your internet and try again");
-
-    }
+    showToast("Order removed");
+    show("orders");
 
   });
 
