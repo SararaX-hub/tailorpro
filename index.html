@@ -13,29 +13,6 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<script>
-// Loads the Supabase code library with a backup source and a timeout, so a
-// slow or blocked connection shows a clear message instead of a silent hang.
-window.__nyuziLibReady = (function () {
-  function loadScript(url, timeoutMs) {
-    return new Promise(function (resolve) {
-      var done = false;
-      var s = document.createElement('script');
-      s.src = url;
-      s.onload = function () { if (!done) { done = true; resolve(true); } };
-      s.onerror = function () { if (!done) { done = true; resolve(false); } };
-      document.head.appendChild(s);
-      setTimeout(function () { if (!done) { done = true; resolve(false); } }, timeoutMs);
-    });
-  }
-  return (async function () {
-    if (await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 7000)) return true;
-    if (await loadScript('https://unpkg.com/@supabase/supabase-js@2', 7000)) return true;
-    return false;
-  })();
-})();
-</script>
-
 <title>Nyuzi House</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1020,16 +997,6 @@ button, a.btn, a.quickcell {
   border: none;
 }
 
-.conn-error-screen {
-  padding-top: 80px;
-  text-align: center;
-}
-
-.conn-error-icon {
-  font-size: 40px;
-  margin-bottom: 14px;
-}
-
 .auth-title {
   font-family: 'Fredoka', -apple-system, sans-serif;
   font-size: 44px;
@@ -1258,19 +1225,6 @@ button, a.btn, a.quickcell {
 </section>
 
 <!-- CONNECTION PROBLEM -->
-<section id="connError" class="screen conn-error-screen">
-
-  <div class="conn-error-icon">📶</div>
-  <h2>Can't connect</h2>
-  <p class="muted" style="padding:0 20px">
-    Nyuzi House couldn't reach the server. Check your internet connection, then try again.
-  </p>
-
-  <button class="btn" style="margin:24px 20px 0" onclick="location.reload()">Try Again</button>
-
-</section>
-
-
 <!-- LOGIN / SIGN UP -->
 <section id="auth" class="screen onboarding-screen">
 
@@ -1653,16 +1607,240 @@ let sb = null;
 let authMode = "login";
 let currentSession = null;
 
-async function connectSupabase() {
+// A small, self-contained client for Supabase's own REST APIs — no
+// external script, no CDN, nothing to download before the app can start.
+// This is what makes it possible to open the app and see cached data with
+// no connection at all: there is nothing left that MUST load from the
+// internet just to reach that point.
+const SESSION_KEY = "nyuzi_session";
 
-  const libLoaded = await window.__nyuziLibReady;
+function createLocalSupabaseClient(url, anonKey) {
 
-  if (!libLoaded || typeof supabase === "undefined") {
-    return false;
+  let session = null;
+  let refreshPromise = null;
+
+  function authHeader() {
+    return "Bearer " + (session && session.access_token ? session.access_token : anonKey);
   }
 
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  async function rawFetch(path, opts) {
 
+    try {
+
+      const response = await fetch(url + path, opts);
+      let body = null;
+      try { body = await response.json(); } catch (e) { body = null; }
+      return { response, body };
+
+    } catch (err) {
+
+      // No connection at all — fetch() itself throws. Represent this the
+      // same way throughout: a response-shaped error with no .code, so the
+      // rest of the app can tell "just offline" apart from a real rejection.
+      return { response: null, body: null, networkError: true };
+
+    }
+
+  }
+
+  async function restRequest(method, path, { body, headers = {} } = {}) {
+
+    const { response, body: data, networkError } = await rawFetch(path, {
+      method,
+      headers: {
+        apikey: anonKey,
+        Authorization: authHeader(),
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+
+    if (networkError) {
+      return { data: null, error: { message: "Failed to fetch" } };
+    }
+
+    if (response.status === 401 && session) {
+      const refreshed = await refreshSession();
+      if (refreshed) return restRequest(method, path, { body, headers });
+    }
+
+    if (!response.ok) {
+      const message = (data && (data.message || data.error_description || data.msg)) || ("Request failed (" + response.status + ")");
+      return { data: null, error: { message, code: (data && data.code) || "HTTP_" + response.status, status: response.status } };
+    }
+
+    return { data, error: null };
+
+  }
+
+  async function refreshSession() {
+
+    if (!session || !session.refresh_token) return false;
+    if (refreshPromise) return refreshPromise;
+
+    refreshPromise = (async () => {
+
+      const { response, body, networkError } = await rawFetch("/auth/v1/token?grant_type=refresh_token", {
+        method: "POST",
+        headers: { apikey: anonKey, "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: session.refresh_token }),
+      });
+
+      if (networkError || !response || !response.ok || !body || !body.access_token) return false;
+
+      session = { access_token: body.access_token, refresh_token: body.refresh_token, user: body.user || session.user };
+      await storageSet(SESSION_KEY, JSON.stringify(session));
+
+      return true;
+
+    })();
+
+    const result = await refreshPromise;
+    refreshPromise = null;
+    return result;
+
+  }
+
+  function queryBuilder(table) {
+
+    let mode = "select";
+    let payload = null;
+    const filters = [];
+    let orderClause = null;
+    let wantSingle = false;
+
+    const builder = {
+
+      select() { return builder; },
+      insert(obj) { mode = "insert"; payload = obj; return builder; },
+      update(obj) { mode = "update"; payload = obj; return builder; },
+      delete() { mode = "delete"; return builder; },
+      eq(col, val) { filters.push(encodeURIComponent(col) + "=eq." + encodeURIComponent(val)); return builder; },
+      order(col, opts) { orderClause = "order=" + encodeURIComponent(col) + "." + (opts && opts.ascending === false ? "desc" : "asc"); return builder; },
+      single() { wantSingle = true; return builder; },
+
+      then(resolve, reject) {
+
+        const qp = filters.slice();
+        if (orderClause) qp.push(orderClause);
+
+        const headers = {};
+        if (wantSingle) headers.Accept = "application/vnd.pgrst.object+json";
+        if (mode === "insert" || mode === "update") headers.Prefer = "return=representation";
+
+        const method = mode === "select" ? "GET" : mode === "insert" ? "POST" : mode === "update" ? "PATCH" : "DELETE";
+        const path = "/rest/v1/" + table + (qp.length ? "?" + qp.join("&") : "");
+
+        return restRequest(method, path, { body: mode === "insert" || mode === "update" ? payload : undefined, headers })
+          .then(resolve, reject);
+
+      },
+
+    };
+
+    return builder;
+
+  }
+
+  return {
+
+    auth: {
+
+      async signInWithPassword({ email, password }) {
+
+        const { response, body, networkError } = await rawFetch("/auth/v1/token?grant_type=password", {
+          method: "POST",
+          headers: { apikey: anonKey, "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (networkError) return { data: { session: null }, error: { message: "Failed to fetch" } };
+
+        if (!response.ok || !body || !body.access_token) {
+          const message = (body && (body.error_description || body.msg || body.message)) || "Couldn't sign in.";
+          return { data: { session: null }, error: { message } };
+        }
+
+        session = { access_token: body.access_token, refresh_token: body.refresh_token, user: body.user };
+        await storageSet(SESSION_KEY, JSON.stringify(session));
+
+        return { data: { session }, error: null };
+
+      },
+
+      async getSession() {
+
+        if (!session) {
+
+          const raw = await storageGet(SESSION_KEY);
+
+          if (raw) {
+            try { session = JSON.parse(raw); } catch (e) { session = null; }
+          }
+
+        }
+
+        return { data: { session } };
+
+      },
+
+      async signOut() {
+
+        session = null;
+        await storageSet(SESSION_KEY, "");
+
+      },
+
+    },
+
+    from: queryBuilder,
+
+    storage: {
+
+      from(bucket) {
+
+        return {
+
+          async upload(path, blob, opts = {}) {
+
+            const headers = {
+              apikey: anonKey,
+              Authorization: authHeader(),
+              "Content-Type": (opts && opts.contentType) || "application/octet-stream",
+            };
+            if (opts && opts.upsert) headers["x-upsert"] = "true";
+
+            const { response, body, networkError } = await rawFetch("/storage/v1/object/" + bucket + "/" + path, {
+              method: "POST",
+              headers,
+              body: blob,
+            });
+
+            if (networkError) return { data: null, error: { message: "Failed to fetch" } };
+
+            if (!response.ok) {
+              const message = (body && body.message) || "Upload failed";
+              return { data: null, error: { message, code: (body && body.code) || "HTTP_" + response.status } };
+            }
+
+            return { data: { path }, error: null };
+
+          },
+
+        };
+
+      },
+
+    },
+
+  };
+
+}
+
+function connectSupabase() {
+
+  sb = createLocalSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   return true;
 
 }
@@ -2557,7 +2735,7 @@ async function saveNotesFromModal() {
 
 function show(screen) {
 
-  const screensBeforeLogin = ["loading", "auth", "connError"];
+  const screensBeforeLogin = ["loading", "auth"];
   if (!dbReady && !screensBeforeLogin.includes(screen)) return;
 
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -4041,14 +4219,11 @@ setTimeout(async () => {
 
   document.getElementById("splash").classList.add("fade-out");
 
-  const connected = await connectSupabase();
+  connectSupabase();
 
-  if (!connected) {
-    document.getElementById("loading").classList.remove("active");
-    show("connError");
-    return;
-  }
-
+  // getSession() reads from this phone's own storage — no network needed —
+  // so a returning tailor reaches their (possibly cached) data immediately,
+  // online or not.
   const { data } = await sb.auth.getSession();
 
   if (data.session) {
