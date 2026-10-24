@@ -796,6 +796,142 @@ button, a.btn, a.quickcell {
   font-weight: 600;
 }
 
+.pro-badge {
+  display: inline-block;
+  background: #111;
+  color: #FFD700;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.business-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #111;
+  color: white;
+  border-radius: 17px;
+  padding: 18px;
+  margin-top: 12px;
+  text-align: left;
+  width: 100%;
+  border: none;
+}
+
+.business-card .biz-icon {
+  font-size: 26px;
+}
+
+.business-card b {
+  display: block;
+  font-size: 16px;
+}
+
+.business-card span {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.month-nav button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 16px;
+}
+
+.month-nav .month-label {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.net-card {
+  background: #111;
+  color: white;
+  border-radius: 17px;
+  padding: 18px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.net-card .label {
+  font-size: 12px;
+  color: #bbb;
+}
+
+.net-card .value {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.net-card .value.negative {
+  color: #ff6b6b;
+}
+
+.cat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+
+.entry-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.entry-row .entry-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.entry-row .entry-icon.income {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.entry-row .entry-icon.expense {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.entry-row .entry-info {
+  flex: 1;
+}
+
+.entry-row .entry-amount.income {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.entry-row .entry-amount.expense {
+  color: var(--danger);
+  font-weight: 700;
+}
+
 .sync-pill {
   display: inline-flex;
   align-items: center;
@@ -1343,6 +1479,15 @@ button, a.btn, a.quickcell {
 
   </div>
 
+  <button class="business-card" onclick="openBusiness()">
+    <div class="biz-icon">💰</div>
+    <div style="flex:1">
+      <b>Business<span class="pro-badge">PRO</span></b>
+      <span>Income, expenses & monthly totals</span>
+    </div>
+    <div style="color:#888">›</div>
+  </button>
+
   <div id="syncStatusHome"></div>
   <div id="installNudge"></div>
   <div id="backupNudge"></div>
@@ -1530,6 +1675,131 @@ button, a.btn, a.quickcell {
   <div id="ordersList"></div>
 
   <button class="fab" onclick="newOrder()">＋</button>
+
+</section>
+
+
+<!-- BUSINESS (PRO) -->
+<section id="business" class="screen">
+
+  <button class="back" onclick="show('home')">‹ Home</button>
+
+  <div class="top">
+    <h2>Business<span class="pro-badge">PRO</span></h2>
+  </div>
+
+  <div class="month-nav">
+    <button onclick="shiftBusinessMonth(-1)">‹</button>
+    <div class="month-label" id="businessMonthLabel">—</div>
+    <button onclick="shiftBusinessMonth(1)">›</button>
+  </div>
+
+  <div class="net-card">
+    <div class="label">Net this month</div>
+    <div class="value" id="businessNet">—</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Mapato (income)</div>
+      <div class="value" id="businessIncome" style="color:var(--success)">—</div>
+      <div class="muted" id="businessIncomeNote" style="font-size:10px; margin-top:4px"></div>
+    </div>
+    <div class="stat">
+      <div class="label">Matumizi (expenses)</div>
+      <div class="value" id="businessExpenses" style="color:var(--danger)">—</div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-bottom:20px">
+    <button class="card action" onclick="newIncome()" style="height:auto; padding:16px">
+      ➕
+      <b>Add Income</b>
+      <span>Cash sale, other mapato</span>
+    </button>
+    <button class="card action" onclick="newExpense()" style="height:auto; padding:16px">
+      ➖
+      <b>Add Expense</b>
+      <span>Fabric, rent, wages...</span>
+    </button>
+  </div>
+
+  <div id="businessCategoryBreakdown"></div>
+
+  <div style="margin:20px 0 8px"><b>This month's entries</b></div>
+  <div id="businessEntriesList"></div>
+
+</section>
+
+
+<!-- NEW / EDIT EXPENSE -->
+<section id="newExpense" class="screen">
+
+  <button class="back" id="newExpenseBack" onclick="show('business')">‹ Business</button>
+
+  <h2 id="expenseFormTitle">New expense</h2>
+
+  <div class="form">
+
+    <label>DATE</label>
+    <input id="expenseDate" type="date">
+
+    <label>CATEGORY</label>
+    <select id="expenseCategory">
+      <option>Fabric</option>
+      <option>Rent</option>
+      <option>Transport</option>
+      <option>Wages</option>
+      <option>Utilities</option>
+      <option>Other</option>
+    </select>
+
+    <label>AMOUNT (<span class="curr">TSh</span>)</label>
+    <input id="expenseAmount" inputmode="numeric" placeholder="e.g. 20000">
+
+    <label>NOTE (OPTIONAL)</label>
+    <input id="expenseNote" placeholder="e.g. Khanga fabric from market">
+
+    <br><br>
+
+    <button class="btn" onclick="saveExpense()">Save expense</button>
+
+    <div id="expenseDeleteWrap" style="display:none; margin-top:10px">
+      <button class="btn danger" onclick="deleteExpense()">Delete this expense</button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- NEW / EDIT INCOME -->
+<section id="newIncome" class="screen">
+
+  <button class="back" id="newIncomeBack" onclick="show('business')">‹ Business</button>
+
+  <h2 id="incomeFormTitle">New income</h2>
+
+  <div class="form">
+
+    <label>DATE</label>
+    <input id="incomeDate" type="date">
+
+    <label>AMOUNT (<span class="curr">TSh</span>)</label>
+    <input id="incomeAmount" inputmode="numeric" placeholder="e.g. 50000">
+
+    <label>NOTE (OPTIONAL)</label>
+    <input id="incomeNote" placeholder="e.g. Cash sale, alterations">
+
+    <br><br>
+
+    <button class="btn" onclick="saveIncomeEntry()">Save income</button>
+
+    <div id="incomeDeleteWrap" style="display:none; margin-top:10px">
+      <button class="btn danger" onclick="deleteIncomeEntry()">Delete this entry</button>
+    </div>
+
+  </div>
 
 </section>
 
@@ -2042,6 +2312,29 @@ function dbOrderToLocal(row) {
 
 }
 
+function dbExpenseToLocal(row) {
+
+  return {
+    id: row.id,
+    date: row.entry_date,
+    category: row.category || "Other",
+    amount: Number(row.amount) || 0,
+    note: row.note || "",
+  };
+
+}
+
+function dbIncomeToLocal(row) {
+
+  return {
+    id: row.id,
+    date: row.entry_date,
+    amount: Number(row.amount) || 0,
+    note: row.note || "",
+  };
+
+}
+
 
 /* -----------------------------
    OFFLINE SYNC QUEUE
@@ -2357,11 +2650,16 @@ let database = {
   shop: { name: "Nyuzi House", currency: "TSh" },
   customers: [],
   orders: [],
+  expenses: [],
+  income: [],
   meta: { lastBackup: null, installDismissed: false, onboarded: false }
 };
 
 let currentCustomer = null;
 let editingCustomerId = null;
+let editingExpenseId = null;
+let editingIncomeId = null;
+let businessMonthOffset = 0;   // 0 = current month, -1 = last month, etc.
 let editingOrderId = null;
 let currentMeasurementType = "suit";
 let currentOrderFilter = "All";
@@ -2482,15 +2780,19 @@ async function loadDatabase() {
 
   try {
 
-    const [shopRes, custRes, orderRes] = await Promise.all([
+    const [shopRes, custRes, orderRes, expenseRes, incomeRes] = await Promise.all([
       sb.from("shops").select("*").eq("id", uid).single(),
       sb.from("customers").select("*").eq("shop_id", uid).order("created_at", { ascending: false }),
       sb.from("orders").select("*").eq("shop_id", uid).order("created_at", { ascending: false }),
+      sb.from("expenses").select("*").eq("shop_id", uid).order("entry_date", { ascending: false }),
+      sb.from("income_entries").select("*").eq("shop_id", uid).order("entry_date", { ascending: false }),
     ]);
 
     if (shopRes.error) throw shopRes.error;
     if (custRes.error) throw custRes.error;
     if (orderRes.error) throw orderRes.error;
+    if (expenseRes.error) throw expenseRes.error;
+    if (incomeRes.error) throw incomeRes.error;
 
     database.shop = {
       name: shopRes.data.name,
@@ -2499,6 +2801,8 @@ async function loadDatabase() {
     };
     database.customers = custRes.data.map(dbCustomerToLocal);
     database.orders = orderRes.data.map(dbOrderToLocal);
+    database.expenses = expenseRes.data.map(dbExpenseToLocal);
+    database.income = incomeRes.data.map(dbIncomeToLocal);
     database.meta.onboarded = shopRes.data.onboarded;
 
     await storageSet(STORAGE_KEY, JSON.stringify(database));
@@ -2549,6 +2853,8 @@ function applyLoadedData(loaded) {
   database.shop = loaded.shop || database.shop;
   database.customers = Array.isArray(loaded.customers) ? loaded.customers : [];
   database.orders = Array.isArray(loaded.orders) ? loaded.orders : [];
+  database.expenses = Array.isArray(loaded.expenses) ? loaded.expenses : [];
+  database.income = Array.isArray(loaded.income) ? loaded.income : [];
   database.meta = Object.assign({ lastBackup: null, installDismissed: false, onboarded: false }, loaded.meta || {});
 
 }
@@ -3884,6 +4190,318 @@ function deleteOrder() {
 
     showToast("Order removed");
     show("orders");
+
+  });
+
+}
+
+
+/* -----------------------------
+   BUSINESS (PRO) — income, expenses, monthly totals
+----------------------------- */
+
+function todayISO() {
+
+  return new Date().toISOString().slice(0, 10);
+
+}
+
+function businessMonthDate(offset) {
+
+  const d = new Date();
+  d.setDate(1);   // avoid month-length rollover (e.g. Jan 31 + 1 month)
+  d.setMonth(d.getMonth() + offset);
+  return d;
+
+}
+
+function businessMonthKey(offset) {
+
+  const d = businessMonthDate(offset);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+
+}
+
+function formatBusinessMonthLabel(offset) {
+
+  return businessMonthDate(offset).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+
+}
+
+function openBusiness() {
+
+  businessMonthOffset = 0;
+  renderBusinessScreen();
+  show("business");
+
+}
+
+function shiftBusinessMonth(delta) {
+
+  businessMonthOffset += delta;
+  renderBusinessScreen();
+
+}
+
+function renderBusinessScreen() {
+
+  const monthKey = businessMonthKey(businessMonthOffset);
+
+  updateBusinessMonthLabel();
+
+  const orderIncome = database.orders
+    .filter(o => (o.createdAt || "").slice(0, 7) === monthKey)
+    .reduce((sum, o) => sum + Number(o.paid || 0), 0);
+
+  const monthIncomeEntries = database.income.filter(e => (e.date || "").slice(0, 7) === monthKey);
+  const otherIncome = monthIncomeEntries.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+
+  const monthExpenses = database.expenses.filter(e => (e.date || "").slice(0, 7) === monthKey);
+  const totalExpenses = monthExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+
+  const totalIncome = orderIncome + otherIncome;
+  const net = totalIncome - totalExpenses;
+
+  businessIncome.textContent = money(totalIncome);
+  businessExpenses.textContent = money(totalExpenses);
+
+  businessNet.textContent = money(net);
+  businessNet.classList.toggle("negative", net < 0);
+
+  const byCategory = {};
+  monthExpenses.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + Number(e.amount || 0); });
+
+  const catEntries = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
+
+  businessCategoryBreakdown.innerHTML = catEntries.length ? `
+    <div class="card" style="margin-bottom:16px">
+      <b style="font-size:13px">Expenses by category</b>
+      ${catEntries.map(([cat, amt]) => `
+        <div class="cat-row"><span>${escapeHtml(cat)}</span><b>${money(amt)}</b></div>
+      `).join("")}
+    </div>
+  ` : "";
+
+  const combined = [
+    ...monthExpenses.map(e => ({ ...e, kind: "expense" })),
+    ...monthIncomeEntries.map(e => ({ ...e, kind: "income" })),
+  ].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+  businessEntriesList.innerHTML = combined.length ? combined.map(e => `
+    <div class="entry-row" onclick="${e.kind === "expense" ? `editExpense('${e.id}')` : `editIncome('${e.id}')`}">
+      <div class="entry-icon ${e.kind}">${e.kind === "expense" ? "➖" : "➕"}</div>
+      <div class="entry-info">
+        <div>${e.kind === "expense" ? escapeHtml(e.category) : "Income"}${e.note ? " · " + escapeHtml(e.note) : ""}</div>
+        <div class="muted" style="font-size:11px">${formatDueDate(e.date)}</div>
+      </div>
+      <div class="entry-amount ${e.kind}">${e.kind === "expense" ? "-" : "+"}${money(e.amount)}</div>
+    </div>
+  `).join("") : `<div class="empty">No income or expenses logged yet this month.</div>`;
+
+  updateBusinessIncomeNote(orderIncome);
+
+}
+
+function updateBusinessMonthLabel() {
+
+  businessMonthLabel.textContent = formatBusinessMonthLabel(businessMonthOffset);
+
+}
+
+function updateBusinessIncomeNote(orderIncome) {
+
+  businessIncomeNote.textContent = orderIncome > 0
+    ? "Includes " + money(orderIncome) + " from order payments"
+    : "";
+
+}
+
+function newExpense() {
+
+  editingExpenseId = null;
+
+  expenseFormTitle.textContent = "New expense";
+  expenseDate.value = todayISO();
+  expenseCategory.value = "Fabric";
+  expenseAmount.value = "";
+  expenseNote.value = "";
+  expenseDeleteWrap.style.display = "none";
+
+  newExpenseBack.onclick = () => show("business");
+
+  show("newExpense");
+
+}
+
+function editExpense(id) {
+
+  const e = database.expenses.find(x => x.id === id);
+  if (!e) return;
+
+  editingExpenseId = id;
+
+  expenseFormTitle.textContent = "Edit expense";
+  expenseDate.value = e.date;
+  expenseCategory.value = e.category;
+  expenseAmount.value = e.amount;
+  expenseNote.value = e.note || "";
+  expenseDeleteWrap.style.display = "block";
+
+  newExpenseBack.onclick = () => show("business");
+
+  show("newExpense");
+
+}
+
+async function saveExpense() {
+
+  const amount = Number(expenseAmount.value) || 0;
+  const date = expenseDate.value || todayISO();
+
+  if (amount <= 0) {
+    showAlert("Please enter an amount greater than zero.");
+    return;
+  }
+
+  const uid = currentSession.user.id;
+
+  if (editingExpenseId) {
+
+    const e = database.expenses.find(x => x.id === editingExpenseId);
+
+    const payload = { entry_date: date, category: expenseCategory.value, amount, note: expenseNote.value.trim() };
+
+    e.date = date;
+    e.category = expenseCategory.value;
+    e.amount = amount;
+    e.note = payload.note;
+
+    await saveDatabase();
+    await enqueue({ kind: "upsert", table: "expenses", isInsert: false, rowId: editingExpenseId, payload });
+
+  } else {
+
+    const id = genId();
+    const payload = { id, shop_id: uid, entry_date: date, category: expenseCategory.value, amount, note: expenseNote.value.trim() };
+
+    database.expenses.unshift(dbExpenseToLocal(payload));
+    await saveDatabase();
+    await enqueue({ kind: "upsert", table: "expenses", isInsert: true, payload });
+
+  }
+
+  showToast("Expense saved");
+  renderBusinessScreen();
+  show("business");
+
+}
+
+function deleteExpense() {
+
+  showConfirm("Remove this expense? This cannot be undone.", async () => {
+
+    database.expenses = database.expenses.filter(e => e.id !== editingExpenseId);
+
+    await saveDatabase();
+    await enqueue({ kind: "delete", table: "expenses", rowId: editingExpenseId });
+
+    showToast("Expense removed");
+    renderBusinessScreen();
+    show("business");
+
+  });
+
+}
+
+function newIncome() {
+
+  editingIncomeId = null;
+
+  incomeFormTitle.textContent = "New income";
+  incomeDate.value = todayISO();
+  incomeAmount.value = "";
+  incomeNote.value = "";
+  incomeDeleteWrap.style.display = "none";
+
+  newIncomeBack.onclick = () => show("business");
+
+  show("newIncome");
+
+}
+
+function editIncome(id) {
+
+  const e = database.income.find(x => x.id === id);
+  if (!e) return;
+
+  editingIncomeId = id;
+
+  incomeFormTitle.textContent = "Edit income";
+  incomeDate.value = e.date;
+  incomeAmount.value = e.amount;
+  incomeNote.value = e.note || "";
+  incomeDeleteWrap.style.display = "block";
+
+  newIncomeBack.onclick = () => show("business");
+
+  show("newIncome");
+
+}
+
+async function saveIncomeEntry() {
+
+  const amount = Number(incomeAmount.value) || 0;
+  const date = incomeDate.value || todayISO();
+
+  if (amount <= 0) {
+    showAlert("Please enter an amount greater than zero.");
+    return;
+  }
+
+  const uid = currentSession.user.id;
+
+  if (editingIncomeId) {
+
+    const e = database.income.find(x => x.id === editingIncomeId);
+
+    const payload = { entry_date: date, amount, note: incomeNote.value.trim() };
+
+    e.date = date;
+    e.amount = amount;
+    e.note = payload.note;
+
+    await saveDatabase();
+    await enqueue({ kind: "upsert", table: "income_entries", isInsert: false, rowId: editingIncomeId, payload });
+
+  } else {
+
+    const id = genId();
+    const payload = { id, shop_id: uid, entry_date: date, amount, note: incomeNote.value.trim() };
+
+    database.income.unshift(dbIncomeToLocal(payload));
+    await saveDatabase();
+    await enqueue({ kind: "upsert", table: "income_entries", isInsert: true, payload });
+
+  }
+
+  showToast("Income saved");
+  renderBusinessScreen();
+  show("business");
+
+}
+
+function deleteIncomeEntry() {
+
+  showConfirm("Remove this income entry? This cannot be undone.", async () => {
+
+    database.income = database.income.filter(e => e.id !== editingIncomeId);
+
+    await saveDatabase();
+    await enqueue({ kind: "delete", table: "income_entries", rowId: editingIncomeId });
+
+    showToast("Income entry removed");
+    renderBusinessScreen();
+    show("business");
 
   });
 
