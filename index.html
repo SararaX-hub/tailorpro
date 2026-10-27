@@ -1746,7 +1746,8 @@ button, a.btn, a.quickcell {
 
     <label>CATEGORY</label>
     <select id="expenseCategory">
-      <option>Fabric</option>
+      <option>Fabric/Material</option>
+      <option>Food</option>
       <option>Rent</option>
       <option>Transport</option>
       <option>Wages</option>
@@ -4322,7 +4323,7 @@ function newExpense() {
 
   expenseFormTitle.textContent = "New expense";
   expenseDate.value = todayISO();
-  expenseCategory.value = "Fabric";
+  expenseCategory.value = "Fabric/Material";
   expenseAmount.value = "";
   expenseNote.value = "";
   expenseDeleteWrap.style.display = "none";
