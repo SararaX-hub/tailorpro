@@ -627,6 +627,132 @@ button, a.btn, a.quickcell {
   font-weight: 700;
 }
 
+.nav .nav-plus {
+  flex: 0 0 68px;
+  padding: 0 0 6px;
+}
+
+.nav .nav-plus span {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: -20px auto 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 28px;
+  box-shadow: 0 4px 14px rgba(108,76,224,0.4);
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.quick-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 8px;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  background: white;
+  font-size: 22px;
+}
+
+.quick-item span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.seg {
+  display: inline-flex;
+  background: #f0f0f0;
+  border-radius: 12px;
+  padding: 3px;
+  margin-bottom: 14px;
+}
+
+.seg button {
+  border: none;
+  background: none;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #777;
+}
+
+.seg button.active {
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.feed {
+  column-count: 2;
+  column-gap: 8px;
+}
+
+.feed-item {
+  break-inside: avoid;
+  margin-bottom: 8px;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--primary-light);
+}
+
+.feed-item img {
+  width: 100%;
+  display: block;
+  min-height: 90px;
+}
+
+.feed-cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 22px 10px 8px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.65));
+  color: white;
+}
+
+.feed-cap b {
+  display: block;
+  font-size: 12px;
+}
+
+.feed-cap span {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  background: white;
+  font-size: 15px;
+  text-align: left;
+}
+
+.me-card {
+  text-align: center;
+  padding: 18px 12px 6px;
+}
+
 .fab {
   position: fixed;
   right: max(calc((100vw - 430px)/2 + 20px), 20px);
@@ -1635,7 +1761,6 @@ html.no-splash #splash {
     <div class="muted" id="homeEyebrow" data-no-i18n>TAILOR</div>
     <div style="display:flex; align-items:center; gap:8px">
       <div class="lang-switch" data-no-i18n><button data-lang="en" onclick="setLanguage('en')">EN</button><button data-lang="sw" onclick="setLanguage('sw')">SW</button></div>
-      <button class="gear" onclick="show('settings')">⚙</button>
     </div>
   </div>
 
@@ -1684,28 +1809,7 @@ html.no-splash #splash {
 
   </div>
 
-  <button class="business-card" onclick="openBusiness()">
-    <div class="biz-icon">💰</div>
-    <div style="flex:1">
-      <b>Business<span class="pro-badge">PRO</span></b>
-      <span>Income, expenses & monthly totals</span>
-    </div>
-    <div style="color:#888">›</div>
-  </button>
-
-  <div class="grid" style="margin-top:12px">
-    <button class="card action" onclick="openExplore('maker')" style="height:auto; padding:16px">
-      🔎
-      <b>Explore</b>
-      <span>Find other makers</span>
-    </button>
-    <button class="card action" onclick="openMyProfile()" style="height:auto; padding:16px">
-      🏪
-      <b>My profile</b>
-      <span id="homeProfileStatus">Let customers find you</span>
-    </button>
-  </div>
-
+  
   <div id="syncStatusHome"></div>
   <div id="installNudge"></div>
   <div id="backupNudge"></div>
@@ -1922,7 +2026,7 @@ html.no-splash #splash {
 
   <div class="top">
     <button class="back" id="exploreBack" onclick="show('home')">‹ Home</button>
-    <div style="display:flex; align-items:center; gap:8px; padding-bottom:20px">
+    <div style="display:flex; align-items:center; gap:8px; padding-bottom:20px; margin-left:auto">
       <div class="lang-switch" data-no-i18n><button data-lang="en" onclick="setLanguage('en')">EN</button><button data-lang="sw" onclick="setLanguage('sw')">SW</button></div>
       <button class="link-btn" id="exploreMakerLink" onclick="chooseRole('maker')">I'm a maker ›</button>
     </div>
@@ -1949,6 +2053,11 @@ html.no-splash #splash {
     </select>
   </div>
 
+  <div class="seg" id="exploreViewToggle" data-no-i18n-keep>
+    <button data-view="photos" class="active" onclick="setExploreView('photos')">Photos</button>
+    <button data-view="makers" onclick="setExploreView('makers')">Makers</button>
+  </div>
+
   <div id="exploreList"></div>
 
 </section>
@@ -1964,10 +2073,30 @@ html.no-splash #splash {
 </section>
 
 
+<!-- PROFILE TAB -->
+<section id="me" class="screen">
+
+  <div class="me-card">
+    <div class="maker-thumb" style="width:72px; height:72px; font-size:30px; margin:0 auto 10px">🏪</div>
+    <h2 id="meShopName" style="margin:0 0 8px" data-no-i18n></h2>
+    <span class="craft-pill" id="meCraft"></span>
+  </div>
+
+  <p class="muted" style="text-align:center; margin:12px 0 22px" id="homeProfileStatus">Let customers find you</p>
+
+  <button class="row-btn" onclick="openMyProfile()"><span><span>🏪</span> <span>My public profile</span></span><span>›</span></button>
+  <button class="row-btn" onclick="show('settings')"><span><span>⚙</span> <span>Settings</span></span><span>›</span></button>
+  <div class="row-btn" style="cursor:default"><b>Language</b><div class="lang-switch" data-no-i18n><button data-lang="en" onclick="setLanguage('en')">EN</button><button data-lang="sw" onclick="setLanguage('sw')">SW</button></div></div>
+
+  <button class="btn danger" style="margin-top:10px" onclick="logout()">Log out</button>
+
+</section>
+
+
 <!-- MY PUBLIC PROFILE (editor) -->
 <section id="myProfile" class="screen">
 
-  <button class="back" onclick="show('home')">‹ Home</button>
+  <button class="back" onclick="show('me')">‹ Profile</button>
 
   <h2>My public profile</h2>
 
@@ -2151,7 +2280,7 @@ html.no-splash #splash {
 <!-- SETTINGS -->
 <section id="settings" class="screen">
 
-  <button class="back" onclick="show('home')">‹ Home</button>
+  <button class="back" onclick="show('me')">‹ Profile</button>
 
   <h2>Shop settings</h2>
 
@@ -2199,10 +2328,12 @@ html.no-splash #splash {
 <!-- NAVIGATION -->
 <nav class="nav">
   <button id="navHome" class="active" onclick="show('home')">⌂<br>Home</button>
-  <button id="navCustomers" onclick="show('customers')">👤<br>Customers</button>
-  <button id="navOrders" onclick="show('orders')">📦<br>Orders</button>
-  <button onclick="newCustomer()">＋<br>New</button>
+  <button id="navBusiness" onclick="openBusiness()">💰<br>Business</button>
+  <button id="navPlus" class="nav-plus" onclick="openQuickAdd()" aria-label="Quick add"><span>＋</span></button>
+  <button id="navExplore" onclick="openExplore('maker')">🔎<br>Explore</button>
+  <button id="navMe" onclick="show('me')">👤<br>Profile</button>
 </nav>
+<input id="postPhotoInput" type="file" accept="image/*" style="display:none" onchange="handlePostPhoto(event)">
 
 <div class="toast" id="toast"></div>
 
@@ -2549,6 +2680,18 @@ const SW = {
   "Portfolio": "Picha za kazi",
   "No photos yet": "Bado hakuna picha",
   "Hello, I found you on Nyuzi House.": "Habari, nimekupata kupitia Nyuzi House.",
+  "Profile": "Wasifu",
+  "‹ Profile": "‹ Wasifu",
+  "Settings": "Mipangilio",
+  "Quick add": "Ongeza haraka",
+  "Post a photo": "Weka picha",
+  "Photos": "Picha",
+  "Makers": "Mafundi",
+  "Show more": "Ona zaidi",
+  "Photo posted": "Picha imewekwa",
+  "You can add up to 6 photos. Remove one in your profile first.": "Unaweza kuweka hadi picha 6. Ondoa moja kwenye wasifu wako kwanza.",
+  "Photo added. Fill in your details and switch on 'Show me in the directory' to post it.": "Picha imeongezwa. Jaza taarifa zako na uwashe 'Nionyeshe kwenye orodha' ili ichapishwe.",
+  "No photos yet. See the list of makers.": "Bado hakuna picha. Tazama orodha ya mafundi.",
 };
 const INSTALL_IOS_SW = "\n      <p><b>Weka kwenye iPhone</b></p>\n      <p style=\"margin-top:10px; line-height:1.6\">\n        1. Fungua ukurasa huu kwenye <b>Safari</b><br>\n        2. Gusa kitufe cha <b>Shiriki</b> (mraba wenye mshale)<br>\n        3. Gusa <b>Ongeza kwenye Skrini ya Nyumbani</b><br>\n        4. Gusa <b>Ongeza</b>\n      </p>\n      <p class=\"muted\" style=\"margin-top:10px\">Umeufungua kupitia WhatsApp au Instagram? Gusa kitufe cha ⋯ au dira kisha chagua <b>Fungua kwenye Safari</b> kwanza.</p>\n      <button class=\"btn\" style=\"margin-top:14px\" onclick=\"closeModal()\">Nimeelewa</button>\n";
 const INSTALL_ANDROID_SW = "\n      <p><b>Weka kwenye Android</b></p>\n      <p style=\"margin-top:10px; line-height:1.6\">\n        1. Fungua ukurasa huu kwenye <b>Chrome</b><br>\n        2. Gusa menyu ya <b>⋮</b> (juu kulia)<br>\n        3. Gusa <b>Sakinisha app</b> au <b>Ongeza kwenye skrini ya mwanzo</b>\n      </p>\n      <button class=\"btn\" style=\"margin-top:14px\" onclick=\"closeModal()\">Nimeelewa</button>\n";
@@ -2709,6 +2852,7 @@ function refreshLanguageDependentUI() {
   updateHomeProfileStatus();
 
   if (document.querySelector("#explore.active")) renderExplore();
+  if (document.querySelector("#me.active")) renderMe();
   if (document.querySelector("#makerProfile.active") && shownProfile) renderMakerProfile(shownProfile);
 
   if (!dbReady) return;
@@ -3935,17 +4079,16 @@ function show(screen) {
 
   document.getElementById("app").classList.toggle("onboarding-active", hideBar);
 
+  const TAB_OF = {
+    home: "navHome", customers: "navHome", profile: "navHome", measurements: "navHome",
+    newCustomer: "navHome", orders: "navHome", newOrder: "navHome",
+    business: "navBusiness", newExpense: "navBusiness", newIncome: "navBusiness",
+    explore: "navExplore", makerProfile: "navExplore",
+    me: "navMe", myProfile: "navMe", settings: "navMe",
+  };
+
   document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
-
-  if (screen === "home") navHome.classList.add("active");
-
-  if (["customers", "profile", "measurements", "newCustomer"].includes(screen)) {
-    navCustomers.classList.add("active");
-  }
-
-  if (["orders", "newOrder"].includes(screen)) {
-    navOrders.classList.add("active");
-  }
+  if (TAB_OF[screen]) document.getElementById(TAB_OF[screen]).classList.add("active");
 
   if (screen === "customers") {
     customerPickMode = pendingPickMode;
@@ -3954,6 +4097,7 @@ function show(screen) {
     renderCustomers(customerSearch.value);
   }
   if (screen === "orders") renderOrders();
+  if (screen === "me") renderMe();
 
   if (screen === "home") {
     renderInstallNudge();
@@ -5104,6 +5248,8 @@ let makerBackTarget = "explore";
 let editingPhotos = [];
 let shownProfile = null;
 let makerFlowStarted = false;
+let exploreView = "photos";
+let feedLimit = 30;
 
 function savedRole() {
 
@@ -5142,6 +5288,7 @@ function dbProfileToLocal(row) {
     bio: row.bio || "",
     photos: Array.isArray(row.photo_paths) ? row.photo_paths : [],
     published: !!row.published,
+    featured: !!row.featured,
   };
 
 }
@@ -5235,7 +5382,7 @@ async function openExplore(mode) {
 
   exploreMode = mode;
 
-  exploreBack.style.display = mode === "maker" ? "" : "none";
+  exploreBack.style.display = "none";
   exploreMakerLink.style.display = mode === "browser" ? "" : "none";
 
   show("explore");
@@ -5265,7 +5412,7 @@ async function loadExplore() {
 
   } else {
 
-    exploreData = data.map(dbProfileToLocal);
+    exploreData = data.map(dbProfileToLocal).sort((a, b) => b.featured - a.featured);
     exploreState = "ok";
 
     await storageSet("explore_cache", JSON.stringify(exploreData));
@@ -5309,6 +5456,26 @@ function renderExplore() {
 
   }
 
+  if (exploreView === "photos") {
+
+    const items = buildFeedItems(matches);
+
+    if (!items.length) {
+      exploreList.innerHTML = note + `<div class="empty">${t("No photos yet. See the list of makers.")}<br><br><button class="btn secondary" onclick="setExploreView('makers')">${t("Makers")}</button></div>`;
+      return;
+    }
+
+    exploreList.innerHTML = note + `<div class="feed">` + items.slice(0, feedLimit).map(item => `
+      <div class="feed-item" data-shop="${item.shopId}" onclick="openMakerProfile('${item.shopId}')">
+        <img loading="lazy" alt="" src="${escapeAttr(publicPhotoUrl(item.path))}">
+        <div class="feed-cap"><b>${escapeHtml(item.shopName)}</b><span>${escapeHtml(t(item.craft))} · ${escapeHtml(item.region)}</span></div>
+      </div>
+    `).join("") + `</div>` + (items.length > feedLimit ? `<button class="btn secondary" style="margin:14px 0" onclick="showMorePhotos()">${t("Show more")}</button>` : "");
+
+    return;
+
+  }
+
   exploreList.innerHTML = note + matches.map(p => `
     <div class="maker-card" onclick="openMakerProfile('${p.shopId}')">
       <div class="maker-thumb">${p.photos[0] ? `<img src="${escapeAttr(publicPhotoUrl(p.photos[0]))}">` : (CRAFT_ICONS[p.craft] || "✨")}</div>
@@ -5320,6 +5487,42 @@ function renderExplore() {
       <div class="chev">›</div>
     </div>
   `).join("");
+
+}
+
+// One photo from each maker in turn, so no single maker fills the whole feed
+function buildFeedItems(profiles) {
+
+  const ordered = profiles.slice().sort((a, b) => b.featured - a.featured);
+  const items = [];
+
+  for (let round = 0; round < PORTFOLIO_MAX; round++) {
+    ordered.forEach(p => {
+      if (p.photos[round]) {
+        items.push({ path: p.photos[round], shopId: p.shopId, shopName: p.shopName, craft: p.craft, region: p.region });
+      }
+    });
+  }
+
+  return items;
+
+}
+
+function setExploreView(view) {
+
+  exploreView = view;
+  feedLimit = 30;
+
+  document.querySelectorAll("#exploreViewToggle button").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+
+  renderExplore();
+
+}
+
+function showMorePhotos() {
+
+  feedLimit += 30;
+  renderExplore();
 
 }
 
@@ -5467,16 +5670,7 @@ function readProfileForm() {
 
 }
 
-async function saveMyProfile() {
-
-  const profile = readProfileForm();
-
-  const complete = profile.shopName && profile.region && waNumber(profile.whatsapp).length >= 11;
-
-  if (profile.published && !complete) {
-    showAlert(t("To appear in the directory, add your shop name, region and WhatsApp number."));
-    return;
-  }
+async function persistProfile(profile) {
 
   const uid = currentSession.user.id;
 
@@ -5499,8 +5693,24 @@ async function saveMyProfile() {
   await enqueue({ kind: "upsert", table: "public_profiles", isInsert: true, upsert: true, payload });
 
   updateHomeProfileStatus();
+
+}
+
+async function saveMyProfile() {
+
+  const profile = readProfileForm();
+
+  const complete = profile.shopName && profile.region && waNumber(profile.whatsapp).length >= 11;
+
+  if (profile.published && !complete) {
+    showAlert(t("To appear in the directory, add your shop name, region and WhatsApp number."));
+    return;
+  }
+
+  await persistProfile(profile);
+
   showToast(t("Profile saved"));
-  show("home");
+  show("me");
 
 }
 
@@ -5511,6 +5721,97 @@ function previewMyProfile() {
 
   renderMakerProfile(shownProfile);
   show("makerProfile");
+
+}
+
+function openQuickAdd() {
+
+  openModalHtml(`
+    <p><b>${t("Quick add")}</b></p>
+    <div class="quick-grid">
+      <button class="quick-item" onclick="quickAdd('customer')">👤<span>${t("New customer")}</span></button>
+      <button class="quick-item" onclick="quickAdd('order')">📦<span>${t("New order")}</span></button>
+      <button class="quick-item" onclick="quickAdd('expense')">➖<span>${t("Add Expense")}</span></button>
+      <button class="quick-item" onclick="quickAdd('income')">➕<span>${t("Add Income")}</span></button>
+      <button class="quick-item" onclick="quickAdd('photo')" style="grid-column: span 2">📷<span>${t("Post a photo")}</span></button>
+    </div>
+    <button class="btn secondary" onclick="closeModal()">${t("Cancel")}</button>
+  `);
+
+}
+
+function quickAdd(kind) {
+
+  closeModal();
+
+  if (kind === "customer") newCustomer();
+  if (kind === "order") newOrder();
+  if (kind === "expense") newExpense();
+  if (kind === "income") newIncome();
+  if (kind === "photo") postPhotoInput.click();
+
+}
+
+function handlePostPhoto(event) {
+
+  const file = event.target.files[0];
+  event.target.value = "";
+
+  if (!file) return;
+
+  const profile = database.publicProfile;
+
+  if (profile && profile.photos.length >= PORTFOLIO_MAX) {
+    showAlert(t("You can add up to 6 photos. Remove one in your profile first."));
+    openMyProfile();
+    return;
+  }
+
+  readAndCompressImage(file, 900, 0.65, async dataUrl => {
+
+    showToast(t("Uploading photo…"));
+
+    let path;
+
+    try {
+
+      path = await uploadPhoto(dataUrl, "portfolio");
+
+    } catch (err) {
+
+      showAlert(t("Photos need an internet connection. Connect and try again."));
+      return;
+
+    }
+
+    if (profile && profile.published) {
+
+      await persistProfile({ ...profile, photos: [...profile.photos, path] });
+      showToast(t("Photo posted"));
+      return;
+
+    }
+
+    // Not in the directory yet: finish the profile first, with the photo already added
+    openMyProfile();
+    editingPhotos.push(path);
+    renderPortfolioEditor();
+
+    showAlert(t("Photo added. Fill in your details and switch on 'Show me in the directory' to post it."));
+
+  });
+
+}
+
+function renderMe() {
+
+  const profile = database.publicProfile;
+
+  meShopName.textContent = (profile && profile.shopName) || database.shop.name || "";
+  meCraft.textContent = t((profile && profile.craft) || "Tailor");
+  meCraft.style.display = profile ? "" : "none";
+
+  updateHomeProfileStatus();
 
 }
 
