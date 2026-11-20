@@ -627,6 +627,102 @@ button, a.btn, a.quickcell {
   font-weight: 700;
 }
 
+.logo { line-height: 1; }
+.logo-top { display: flex; align-items: flex-end; gap: 6px; font-family: Georgia, "Times New Roman", serif; font-weight: 900; font-size: 30px; color: #111; letter-spacing: -0.5px; }
+.logo-top svg { margin-bottom: 8px; }
+.logo-main { font-family: Georgia, "Times New Roman", serif; font-weight: 900; font-size: 38px; letter-spacing: -0.5px; background: linear-gradient(90deg, #5B3FD8, #9B7BEF); -webkit-background-clip: text; background-clip: text; color: transparent; margin-top: -4px; }
+.logo-tag { font-size: 6.5px; letter-spacing: 1.7px; color: #444; margin-top: 2px; white-space: nowrap; }
+.ex-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.ex-head-right { display: flex; align-items: center; gap: 8px; }
+.searchbar { display: flex; align-items: center; background: white; border-radius: 18px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); padding: 6px 14px 6px 6px; margin-bottom: 14px; border: 1px solid #f0f0f0; }
+.loc-btn { display: flex; align-items: center; gap: 4px; border: none; background: none; padding: 10px 8px; font-weight: 600; font-size: 14px; white-space: nowrap; max-width: 48%; overflow: hidden; text-overflow: ellipsis; }
+.searchbar .sep { width: 1px; height: 26px; background: #e5e5e5; margin: 0 8px; }
+.searchbar input { flex: 1; min-width: 0; border: none; outline: none; font-size: 15px; background: none; font-family: inherit; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { border: none; background: #f0f0f4; color: #333; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+.chip.active { background: var(--primary); color: white; }
+.chip.static { padding: 6px 12px; font-size: 12px; background: var(--primary-light); color: var(--primary); }
+.chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-wrap.center { justify-content: center; margin: 6px 0 12px; }
+.ex-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.ex-toolbar .seg { margin-bottom: 0; }
+.refresh-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #e5e5e5; background: white; font-size: 18px; }
+.pull-hint { text-align: center; color: #888; font-size: 12px; }
+.pull-hint:empty { display: none; }
+.feed { column-count: 2; column-gap: 10px; }
+.post-card { break-inside: avoid; margin-bottom: 12px; background: white; border-radius: 18px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; }
+.post-media { position: relative; background: var(--primary-light); }
+.post-media img { width: 100%; display: block; min-height: 120px; }
+.video-ph { width: 100%; aspect-ratio: 3 / 4; background: linear-gradient(135deg, #2a2a40, #4b3b8f); }
+.loc-pill { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.45); color: white; font-size: 11px; padding: 5px 9px; border-radius: 12px; max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bm-btn { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 11px; border: none; background: rgba(0,0,0,0.45); font-size: 15px; filter: grayscale(1) brightness(2); }
+.bm-btn.on { background: var(--primary); filter: none; }
+.play-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: white; display: grid; place-items: center; font-size: 16px; padding-left: 3px; }
+.play-badge.sm { width: 28px; height: 28px; font-size: 11px; top: auto; left: auto; right: 6px; bottom: 6px; transform: none; padding-left: 2px; }
+.post-over { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 8px; padding: 26px 10px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); color: white; }
+.post-over b { display: block; font-size: 12.5px; }
+.post-over span { font-size: 10.5px; opacity: .85; }
+.avatar { display: inline-grid; place-items: center; border-radius: 50%; background: var(--primary); color: white; font-weight: 700; overflow: hidden; flex-shrink: 0; border: 2px solid white; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.post-text { padding: 10px 12px 12px; }
+.post-text p { margin: 0 0 4px; font-size: 13px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.post-text small { color: #999; font-size: 11px; }
+.bm-inline { border: none; background: none; font-size: 20px; filter: grayscale(1); opacity: .5; }
+.bm-inline.on { filter: none; opacity: 1; }
+.mp-cover { position: relative; margin: -24px -20px 0; height: 230px; background: linear-gradient(135deg, #4b3b8f, #6C4CE0 60%, #9B7BEF); background-size: cover; background-position: center; }
+.mp-cover-shade { position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,0.25), transparent 40%, rgba(0,0,0,0.25)); }
+.mp-cover-icon { position: absolute; inset: 0; display: grid; place-items: center; font-size: 64px; opacity: .5; }
+.glass-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.88); font-size: 18px; display: inline-grid; place-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.glass-btn.on { background: var(--primary); color: white; }
+.glass-back { position: absolute; top: calc(14px + env(safe-area-inset-top)); left: 14px; font-size: 26px; line-height: 1; padding-bottom: 4px; z-index: 2; }
+.mp-cover-right { position: absolute; top: calc(14px + env(safe-area-inset-top)); right: 14px; display: flex; gap: 8px; z-index: 2; }
+.mp-body { position: relative; margin-top: -46px; text-align: center; }
+.mp-avatar .avatar { border-width: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+.mp-name { margin: 10px 0 8px; font-size: 24px; }
+.mp-meta { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: #666; margin-bottom: 12px; }
+.mp-bio { line-height: 1.5; color: #333; margin: 0 0 14px; text-align: left; }
+.mp-stats { display: flex; justify-content: center; gap: 36px; padding: 14px 0; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; margin-bottom: 14px; }
+.mp-stats b { display: block; font-size: 18px; }
+.mp-stats span { font-size: 11px; color: #888; }
+.mp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 110px; }
+.tile { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 8px; background: var(--primary-light); }
+.tile img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 0; }
+.tile .video-ph, .portfolio-edit .video-ph { height: 100%; aspect-ratio: 1; border-radius: 8px; }
+.maker-actions { position: sticky; bottom: calc(78px + env(safe-area-inset-bottom)); display: flex; gap: 10px; align-items: center; padding: 10px; background: rgba(255,255,255,0.94); border-radius: 20px; box-shadow: 0 6px 24px rgba(0,0,0,0.15); }
+.app.onboarding-active .maker-actions { bottom: 14px; }
+.maker-actions .wa-btn { flex: 1; margin: 0; }
+.call-btn { width: 50px; height: 50px; border-radius: 15px; background: var(--primary-light); display: grid; place-items: center; font-size: 20px; text-decoration: none; }
+.viewer { position: fixed; inset: 0; z-index: 300; background: #000; display: none; flex-direction: column; }
+.viewer-x { position: absolute; top: calc(14px + env(safe-area-inset-top)); left: 14px; z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.18); color: white; font-size: 18px; }
+.viewer-count { position: absolute; top: calc(24px + env(safe-area-inset-top)); right: 18px; z-index: 3; color: white; font-size: 13px; opacity: .85; }
+.viewer-stage { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
+.viewer-stage img, .viewer-stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
+.viewer-nav { position: absolute; top: 40%; z-index: 3; width: 40px; height: 56px; border: none; background: rgba(255,255,255,0.14); color: white; font-size: 26px; }
+.viewer-nav.prev { left: 0; border-radius: 0 14px 14px 0; }
+.viewer-nav.next { right: 0; border-radius: 14px 0 0 14px; }
+.viewer-info { background: #fff; border-radius: 22px 22px 0 0; padding: 16px 18px calc(18px + env(safe-area-inset-bottom)); }
+.vi-row { display: flex; align-items: center; gap: 10px; }
+.vi-row b { display: block; font-size: 15px; }
+.vi-row span { font-size: 12px; color: #777; }
+.vi-caption { margin: 10px 0 0; font-size: 14px; line-height: 1.4; }
+.vi-actions { display: flex; gap: 10px; margin-top: 14px; }
+.vi-actions .btn { margin: 0; }
+.vi-actions .wa-btn { flex: 1.4; }
+.vi-actions .secondary { flex: 1; }
+.pick-list { max-height: 55vh; overflow-y: auto; margin-top: 8px; }
+.pick-row { display: block; width: 100%; text-align: left; padding: 14px 6px; border: none; border-bottom: 1px solid #f0f0f0; background: none; font-size: 15px; }
+.pick-row.on { color: var(--primary); font-weight: 700; }
+.composer-preview { border-radius: 14px; overflow: hidden; background: #000; margin: 8px 0 12px; max-height: 260px; display: flex; justify-content: center; }
+.composer-preview img, .composer-preview video { max-width: 100%; max-height: 260px; }
+.modal-box textarea { width: 100%; border: 1px solid #ddd; border-radius: 12px; padding: 12px; font-size: 15px; font-family: inherit; margin-bottom: 12px; min-height: 70px; resize: none; box-sizing: border-box; }
+.avatar-edit { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.avatar-edit .avatar { border-color: #eee; }
+.form textarea { width: 100%; border: 1px solid #ddd; border-radius: 12px; padding: 12px; font-size: 15px; font-family: inherit; min-height: 80px; resize: none; margin-top: 6px; box-sizing: border-box; }
+
+.ex-head-right .link-btn { white-space: nowrap; padding: 6px 2px; }
+.vi-actions .wa-btn { white-space: nowrap; font-size: 14px; padding-left: 8px; padding-right: 8px; }
+
 .nav .nav-plus {
   flex: 0 0 68px;
   padding: 0 0 6px;
@@ -2024,39 +2120,35 @@ html.no-splash #splash {
 <!-- EXPLORE: find a maker -->
 <section id="explore" class="screen">
 
-  <div class="top">
-    <button class="back" id="exploreBack" onclick="show('home')">‹ Home</button>
-    <div style="display:flex; align-items:center; gap:8px; padding-bottom:20px; margin-left:auto">
+  <div class="ex-head">
+    <div class="logo" data-no-i18n>
+      <div class="logo-top"><span>NYUZI</span><svg viewBox="0 0 44 26" width="36" height="22" aria-hidden="true"><path d="M3 24 L22 5 L41 24" fill="none" stroke="#6C4CE0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 24 L22 15 L31 24" fill="none" stroke="#9B7BEF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="logo-main">HOUSE</div>
+      <div class="logo-tag">TAILORS · CREATORS · COMMUNITY</div>
+    </div>
+    <div class="ex-head-right">
       <div class="lang-switch" data-no-i18n><button data-lang="en" onclick="setLanguage('en')">EN</button><button data-lang="sw" onclick="setLanguage('sw')">SW</button></div>
       <button class="link-btn" id="exploreMakerLink" onclick="chooseRole('maker')">I'm a maker ›</button>
     </div>
   </div>
 
-  <h2>Find a maker</h2>
-
-  <div class="search" style="margin-top:0">
-    🔍
-    <input id="exploreSearch" placeholder="e.g. Morogoro, Kihonda" oninput="renderExplore()">
+  <div class="searchbar">
+    <button class="loc-btn" onclick="openRegionPicker()"><span>📍</span><span id="exploreLocLabel">All regions</span><span>⌄</span></button>
+    <span class="sep"></span>
+    <input id="exploreSearch" placeholder="Search makers, places or services…" oninput="renderExplore()">
   </div>
 
-  <div class="two-col">
-    <select id="exploreRegion" onchange="renderExplore()">
-      <option value="">All regions</option>
-    </select>
-    <select id="exploreCraft" onchange="renderExplore()">
-      <option value="">All crafts</option>
-      <option value="Tailor">Tailor</option>
-      <option value="Leather maker">Leather maker</option>
-      <option value="Boutique">Boutique</option>
-      <option value="Fabric store">Fabric store</option>
-      <option value="Other">Other</option>
-    </select>
+  <div class="chips" id="exploreChips"></div>
+
+  <div class="ex-toolbar">
+    <div class="seg" id="exploreViewToggle">
+      <button data-view="photos" class="active" onclick="setExploreView('photos')">Posts</button>
+      <button data-view="makers" onclick="setExploreView('makers')">Makers</button>
+    </div>
+    <button class="refresh-btn" aria-label="Refresh" onclick="refreshFeed()">↻</button>
   </div>
 
-  <div class="seg" id="exploreViewToggle" data-no-i18n-keep>
-    <button data-view="photos" class="active" onclick="setExploreView('photos')">Photos</button>
-    <button data-view="makers" onclick="setExploreView('makers')">Makers</button>
-  </div>
+  <div id="pullHint" class="pull-hint"></div>
 
   <div id="exploreList"></div>
 
@@ -2065,8 +2157,6 @@ html.no-splash #splash {
 
 <!-- A MAKER'S PUBLIC PROFILE (what customers see) -->
 <section id="makerProfile" class="screen">
-
-  <button class="back" onclick="closeMakerProfile()">‹ Back</button>
 
   <div id="makerProfileContent"></div>
 
@@ -2102,19 +2192,30 @@ html.no-splash #splash {
 
   <p class="muted" style="margin-top:-8px">This is what customers see when they search. Your customers, orders and money are never shown.</p>
 
+  <div class="avatar-edit">
+    <div id="profAvatarPreview"></div>
+    <div>
+      <button class="btn secondary" style="width:auto; padding:10px 18px" onclick="profAvatarInput.click()">Change picture</button>
+      <input id="profAvatarInput" type="file" accept="image/*" style="display:none" onchange="handleAvatarPhoto(event)">
+    </div>
+  </div>
+
   <div class="form">
 
     <label>SHOP NAME</label>
-    <input id="profShopName" placeholder="e.g. SARARA Tailoring">
+    <input id="profShopName" placeholder="e.g. SARARA Tailoring" oninput="renderAvatarEditor()">
 
     <label>CRAFT</label>
-    <select id="profCraft">
+    <select id="profCraft" onchange="renderSpecialtyChips()">
       <option value="Tailor">Tailor</option>
       <option value="Leather maker">Leather maker</option>
       <option value="Boutique">Boutique</option>
       <option value="Fabric store">Fabric store</option>
       <option value="Other">Other</option>
     </select>
+
+    <label>WHAT DO YOU DO? (PICK ANY)</label>
+    <div id="profSpecialties" class="chip-wrap"></div>
 
     <label>REGION</label>
     <select id="profRegion">
@@ -2130,10 +2231,9 @@ html.no-splash #splash {
     <label>ABOUT YOU (OPTIONAL)</label>
     <textarea id="profBio" maxlength="240" placeholder="e.g. Suits and kanzu, 8 years of experience"></textarea>
 
-    <label>PORTFOLIO PHOTOS (UP TO 6)</label>
-    <div id="profPhotos" class="portfolio-edit"></div>
-    <input id="profPhotoInput" type="file" accept="image/*" style="display:none" onchange="handlePortfolioPhoto(event)">
-    <button class="btn secondary" id="profAddPhotoBtn" onclick="profPhotoInput.click()">＋ Add a photo</button>
+    <label>POSTS (UP TO 20)</label>
+    <div id="profPosts" class="portfolio-edit"></div>
+    <button class="btn secondary" id="profAddPostBtn" onclick="startPost()">＋ Add a photo or video</button>
 
     <div class="checkbox-row" style="margin-top:20px">
       <input type="checkbox" id="profPublished">
@@ -2333,7 +2433,16 @@ html.no-splash #splash {
   <button id="navExplore" onclick="openExplore('maker')">🔎<br>Explore</button>
   <button id="navMe" onclick="show('me')">👤<br>Profile</button>
 </nav>
-<input id="postPhotoInput" type="file" accept="image/*" style="display:none" onchange="handlePostPhoto(event)">
+<input id="postMediaInput" type="file" accept="image/*,video/*" style="display:none" onchange="handlePostMedia(event)">
+
+<div id="viewer" class="viewer">
+  <button class="viewer-x" aria-label="Close" onclick="closeViewer()">✕</button>
+  <div id="viewerCount" class="viewer-count"></div>
+  <button id="viewerPrev" class="viewer-nav prev" aria-label="Previous" onclick="stepViewer(-1)">‹</button>
+  <button id="viewerNext" class="viewer-nav next" aria-label="Next" onclick="stepViewer(1)">›</button>
+  <div id="viewerStage" class="viewer-stage"></div>
+  <div id="viewerInfo" class="viewer-info"></div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -2692,6 +2801,77 @@ const SW = {
   "You can add up to 6 photos. Remove one in your profile first.": "Unaweza kuweka hadi picha 6. Ondoa moja kwenye wasifu wako kwanza.",
   "Photo added. Fill in your details and switch on 'Show me in the directory' to post it.": "Picha imeongezwa. Jaza taarifa zako na uwashe 'Nionyeshe kwenye orodha' ili ichapishwe.",
   "No photos yet. See the list of makers.": "Bado hakuna picha. Tazama orodha ya mafundi.",
+  "Just now": "Sasa hivi",
+  "{n}m ago": "dakika {n} zilizopita",
+  "{n}h ago": "saa {n} zilizopita",
+  "{n}d ago": "siku {n} zilizopita",
+  "{n}w ago": "wiki {n} zilizopita",
+  "{n}mo ago": "miezi {n} iliyopita",
+  "{n}y ago": "miaka {n} iliyopita",
+  "Saved to your list": "Imehifadhiwa kwenye orodha yako",
+  "Removed from your saved list": "Imeondolewa kwenye orodha yako",
+  "Feed refreshed": "Imesasishwa",
+  "Saved": "Zilizohifadhiwa",
+  "More": "Zaidi",
+  "Filter by": "Chuja kwa",
+  "Close": "Funga",
+  "Pick a region": "Chagua mkoa",
+  "Release to refresh": "Achia ili kusasisha",
+  "Pull down to refresh": "Vuta chini ili kusasisha",
+  "Posts": "Machapisho",
+  "Videos": "Video",
+  "No posts yet": "Bado hakuna machapisho",
+  "No posts yet. See the list of makers.": "Bado hakuna machapisho. Tazama orodha ya mafundi.",
+  "{name} on Nyuzi House": "{name} kwenye Nyuzi House",
+  "Link copied": "Kiungo kimenakiliwa",
+  "View profile": "Tazama wasifu",
+  "Search makers, places or services…": "Tafuta mafundi, maeneo au huduma…",
+  "Change picture": "Badilisha picha",
+  "WHAT DO YOU DO? (PICK ANY)": "UNAFANYA NINI? (CHAGUA YOYOTE)",
+  "POSTS (UP TO 20)": "MACHAPISHO (HADI 20)",
+  "＋ Add a photo or video": "＋ Ongeza picha au video",
+  "Post a photo or video": "Weka picha au video",
+  "New post": "Chapisho jipya",
+  "Edit post": "Hariri chapisho",
+  "Write a caption (optional)": "Andika maelezo (si lazima)",
+  "Post": "Chapisha",
+  "Save caption": "Hifadhi maelezo",
+  "Delete post": "Futa chapisho",
+  "Post updated": "Chapisho limesasishwa",
+  "Post removed": "Chapisho limeondolewa",
+  "Remove this post? This cannot be undone.": "Ondoa chapisho hili? Hili haliwezi kurudishwa.",
+  "Uploading…": "Inapakia…",
+  "Please keep this open until it finishes.": "Tafadhali acha hii wazi hadi ikamilike.",
+  "Posted": "Imechapishwa",
+  "Saved. It will show once your profile is in the directory.": "Imehifadhiwa. Itaonekana wasifu wako ukiwa kwenye orodha.",
+  "Uploads need an internet connection. Connect and try again.": "Kupakia kunahitaji intaneti. Unganisha kisha ujaribu tena.",
+  "You can have up to 20 posts. Delete one in your profile first.": "Unaweza kuwa na hadi machapisho 20. Futa moja kwenye wasifu wako kwanza.",
+  "That video is too big. Please choose one under 25 MB.": "Video hiyo ni kubwa mno. Tafadhali chagua iliyo chini ya MB 25.",
+  "We couldn't read that video. Try another one.": "Imeshindwa kusoma video hiyo. Jaribu nyingine.",
+  "Videos can be up to 30 seconds long.": "Video zinaweza kuwa hadi sekunde 30.",
+  "Suits": "Suti",
+  "Shirts": "Mashati",
+  "Trousers": "Suruali",
+  "Dresses": "Magauni",
+  "Traditional wear": "Mavazi ya kitamaduni",
+  "Alterations": "Marekebisho",
+  "Uniforms": "Sare",
+  "Wedding wear": "Mavazi ya harusi",
+  "Kids wear": "Mavazi ya watoto",
+  "Bags": "Mikoba",
+  "Shoes": "Viatu",
+  "Belts": "Mikanda",
+  "Wallets": "Pochi",
+  "Sandals": "Sandali",
+  "Repairs": "Matengenezo",
+  "Men's wear": "Mavazi ya wanaume",
+  "Women's wear": "Mavazi ya wanawake",
+  "Accessories": "Vifaa",
+  "Fabrics": "Vitambaa",
+  "Lace": "Lesi",
+  "Kitenge": "Vitenge",
+  "Suiting": "Vitambaa vya suti",
+  "Custom orders": "Oda maalum",
 };
 const INSTALL_IOS_SW = "\n      <p><b>Weka kwenye iPhone</b></p>\n      <p style=\"margin-top:10px; line-height:1.6\">\n        1. Fungua ukurasa huu kwenye <b>Safari</b><br>\n        2. Gusa kitufe cha <b>Shiriki</b> (mraba wenye mshale)<br>\n        3. Gusa <b>Ongeza kwenye Skrini ya Nyumbani</b><br>\n        4. Gusa <b>Ongeza</b>\n      </p>\n      <p class=\"muted\" style=\"margin-top:10px\">Umeufungua kupitia WhatsApp au Instagram? Gusa kitufe cha ⋯ au dira kisha chagua <b>Fungua kwenye Safari</b> kwanza.</p>\n      <button class=\"btn\" style=\"margin-top:14px\" onclick=\"closeModal()\">Nimeelewa</button>\n";
 const INSTALL_ANDROID_SW = "\n      <p><b>Weka kwenye Android</b></p>\n      <p style=\"margin-top:10px; line-height:1.6\">\n        1. Fungua ukurasa huu kwenye <b>Chrome</b><br>\n        2. Gusa menyu ya <b>⋮</b> (juu kulia)<br>\n        3. Gusa <b>Sakinisha app</b> au <b>Ongeza kwenye skrini ya mwanzo</b>\n      </p>\n      <button class=\"btn\" style=\"margin-top:14px\" onclick=\"closeModal()\">Nimeelewa</button>\n";
@@ -2853,7 +3033,7 @@ function refreshLanguageDependentUI() {
 
   if (document.querySelector("#explore.active")) renderExplore();
   if (document.querySelector("#me.active")) renderMe();
-  if (document.querySelector("#makerProfile.active") && shownProfile) renderMakerProfile(shownProfile);
+  if (document.querySelector("#makerProfile.active") && shownProfile) renderMakerProfile(shownProfile, shownPosts);
 
   if (!dbReady) return;
 
@@ -3670,6 +3850,7 @@ let database = {
   expenses: [],
   income: [],
   publicProfile: null,
+  myPosts: [],
   meta: { lastBackup: null, installDismissed: false, onboarded: false }
 };
 
@@ -3831,6 +4012,13 @@ async function loadDatabase() {
       }
     } catch (e) {}
 
+    try {
+      const postsRes = await sb.from("posts").select("*").eq("shop_id", uid).order("created_at", { ascending: false });
+      if (!postsRes.error && Array.isArray(postsRes.data)) {
+        database.myPosts = postsRes.data.map(dbPostToLocal);
+      }
+    } catch (e) {}
+
     await storageSet(STORAGE_KEY, JSON.stringify(database));
 
   } catch (err) {
@@ -3882,6 +4070,7 @@ function applyLoadedData(loaded) {
   database.expenses = Array.isArray(loaded.expenses) ? loaded.expenses : [];
   database.income = Array.isArray(loaded.income) ? loaded.income : [];
   database.publicProfile = loaded.publicProfile || null;
+  database.myPosts = Array.isArray(loaded.myPosts) ? loaded.myPosts : [];
   database.meta = Object.assign({ lastBackup: null, installDismissed: false, onboarded: false }, loaded.meta || {});
 
 }
@@ -5227,11 +5416,14 @@ function deleteOrder() {
 
 
 /* -----------------------------
-   PUBLIC DIRECTORY — profiles anyone can browse, and each maker's own profile
+   PUBLIC DIRECTORY — makers, their posts (photos and videos), the feed and the viewer
 ----------------------------- */
 
 const ROLE_KEY = "nyuzi_role";
-const PORTFOLIO_MAX = 6;
+const SAVED_KEY = "nyuzi_saved";
+const POST_MAX = 20;
+const VIDEO_MAX_SECONDS = 30;
+const VIDEO_MAX_BYTES = 25 * 1024 * 1024;
 const TZ_REGIONS = [
   "Arusha", "Dar es Salaam", "Dodoma", "Geita", "Iringa", "Kagera", "Katavi", "Kigoma", "Kilimanjaro",
   "Lindi", "Manyara", "Mara", "Mbeya", "Morogoro", "Mtwara", "Mwanza", "Njombe", "Pwani", "Rukwa",
@@ -5239,17 +5431,39 @@ const TZ_REGIONS = [
   "Mjini Magharibi", "Kaskazini Unguja", "Kusini Unguja", "Kaskazini Pemba", "Kusini Pemba"
 ];
 const CRAFT_ICONS = { "Tailor": "🧵", "Leather maker": "👜", "Boutique": "👗", "Fabric store": "🧶", "Other": "✨" };
+const SPECIALTIES = {
+  "Tailor": ["Suits", "Shirts", "Trousers", "Kanzu", "Dresses", "Traditional wear", "Alterations", "Uniforms", "Wedding wear", "Kids wear"],
+  "Leather maker": ["Bags", "Shoes", "Belts", "Wallets", "Sandals", "Repairs"],
+  "Boutique": ["Dresses", "Men's wear", "Women's wear", "Kids wear", "Accessories", "Shoes"],
+  "Fabric store": ["Fabrics", "Lace", "Kitenge", "Suiting", "Accessories"],
+  "Other": ["Custom orders", "Repairs", "Accessories"],
+};
+const FEED_CHIPS = ["Suits", "Shirts", "Trousers", "Traditional wear", "Alterations"];
 
 let exploreMode = "maker";
-let exploreData = [];
+let exploreData = [];          // published profiles
+let explorePosts = [];         // posts of those profiles
+let exploreOrder = [];         // post ids in the current (shuffled) order
 let exploreState = "idle";     // idle | loading | ok | error
 let exploreFromCache = false;
-let makerBackTarget = "explore";
-let editingPhotos = [];
-let shownProfile = null;
-let makerFlowStarted = false;
-let exploreView = "photos";
+let exploreView = "photos";    // photos | makers
+let exploreRegionValue = "";
+let exploreChip = "";          // "" = all, "__saved", or a specialty / craft
 let feedLimit = 30;
+let lastFeedItems = [];
+let makerBackTarget = "explore";
+let shownProfile = null;
+let shownPosts = [];
+let viewerItems = [];
+let viewerIndex = 0;
+let editingAvatar = null;
+let editingSpecialties = [];
+let pendingPost = null;
+let editingPostId = null;
+let exploreScrollY = 0;
+let editorScrollY = 0;
+
+/* ---------- who is using the app ---------- */
 
 function savedRole() {
 
@@ -5286,19 +5500,31 @@ function dbProfileToLocal(row) {
     area: row.area || "",
     whatsapp: row.whatsapp || "",
     bio: row.bio || "",
-    photos: Array.isArray(row.photo_paths) ? row.photo_paths : [],
+    avatar: row.avatar_path || null,
+    specialties: Array.isArray(row.specialties) ? row.specialties : [],
     published: !!row.published,
     featured: !!row.featured,
   };
 
 }
 
+function dbPostToLocal(row) {
+
+  return {
+    id: row.id,
+    shopId: row.shop_id,
+    path: row.media_path,
+    type: row.media_type === "video" ? "video" : "image",
+    poster: row.poster_path || null,
+    caption: row.caption || "",
+    createdAt: row.created_at,
+  };
+
+}
+
 function fillRegionSelects() {
 
-  const options = TZ_REGIONS.map(r => `<option value="${r}">${r}</option>`).join("");
-
-  exploreRegion.insertAdjacentHTML("beforeend", options);
-  profRegion.insertAdjacentHTML("beforeend", options);
+  profRegion.insertAdjacentHTML("beforeend", TZ_REGIONS.map(r => `<option value="${r}">${r}</option>`).join(""));
 
 }
 
@@ -5353,6 +5579,7 @@ async function bootApp() {
   // Reading the saved login uses this phone's own storage, so it works offline
   const { data } = await sb.auth.getSession();
   const role = savedRole();
+  const sharedMaker = new URLSearchParams(location.search).get("m");
 
   if (data.session) {
 
@@ -5360,7 +5587,23 @@ async function bootApp() {
     if (role !== "maker") saveRole("maker");
 
     document.documentElement.classList.remove("no-splash");
-    setTimeout(startMakerFlow, 1600);
+
+    setTimeout(async () => {
+      await startMakerFlow();
+      if (sharedMaker) await openExplore("maker", sharedMaker);
+    }, 1600);
+
+    return;
+
+  }
+
+  // Someone opened a link that a maker shared
+  if (sharedMaker) {
+
+    document.documentElement.classList.add("no-splash");
+    if (!role) saveRole("browser");
+
+    await openExplore("browser", sharedMaker);
     return;
 
   }
@@ -5378,17 +5621,156 @@ async function bootApp() {
 
 }
 
-async function openExplore(mode) {
+/* ---------- small helpers for showing makers and posts ---------- */
+
+function timeAgo(iso) {
+
+  const seconds = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+
+  if (isNaN(seconds) || seconds < 60) return t("Just now");
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return t("{n}m ago", { n: minutes });
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return t("{n}h ago", { n: hours });
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return t("{n}d ago", { n: days });
+  if (days < 30) return t("{n}w ago", { n: Math.floor(days / 7) });
+  if (days < 365) return t("{n}mo ago", { n: Math.floor(days / 30) });
+
+  return t("{n}y ago", { n: Math.floor(days / 365) });
+
+}
+
+function avatarHtml(profile, size) {
+
+  const style = `width:${size}px; height:${size}px; font-size:${Math.round(size * 0.42)}px`;
+
+  if (profile.avatar) {
+    return `<span class="avatar" style="${style}"><img alt="" src="${escapeAttr(publicPhotoUrl(profile.avatar))}"></span>`;
+  }
+
+  const initial = (profile.shopName || "?").trim().charAt(0).toUpperCase();
+
+  return `<span class="avatar" style="${style}">${escapeHtml(initial)}</span>`;
+
+}
+
+function specialtiesLine(profile) {
+
+  return profile.specialties.length
+    ? profile.specialties.slice(0, 3).map(s => t(s)).join(" • ")
+    : t(profile.craft);
+
+}
+
+function placeText(profile) {
+
+  return profile.area ? profile.area + ", " + profile.region : profile.region;
+
+}
+
+function postImage(post) {
+
+  if (post.type === "video") {
+    return post.poster ? `<img loading="lazy" alt="" src="${escapeAttr(publicPhotoUrl(post.poster))}">` : `<div class="video-ph"></div>`;
+  }
+
+  return `<img loading="lazy" alt="" src="${escapeAttr(publicPhotoUrl(post.path))}">`;
+
+}
+
+function postsOf(shopId) {
+
+  return explorePosts.filter(post => post.shopId === shopId);
+
+}
+
+/* ---------- saved makers (kept on this phone) ---------- */
+
+function readSaved() {
+
+  try { return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]"); } catch (e) { return []; }
+
+}
+
+let savedMakers = readSaved();
+
+function isSaved(shopId) {
+
+  return savedMakers.includes(shopId);
+
+}
+
+function toggleSaved(shopId, event) {
+
+  if (event) event.stopPropagation();
+
+  savedMakers = isSaved(shopId) ? savedMakers.filter(id => id !== shopId) : [...savedMakers, shopId];
+
+  try { localStorage.setItem(SAVED_KEY, JSON.stringify(savedMakers)); } catch (e) {}
+
+  showToast(isSaved(shopId) ? t("Saved to your list") : t("Removed from your saved list"));
+
+  if (document.querySelector("#explore.active")) renderExplore();
+  if (document.querySelector("#makerProfile.active") && shownProfile) renderMakerProfile(shownProfile, shownPosts);
+
+}
+
+/* ---------- Explore: loading, order, filters ---------- */
+
+async function openExplore(mode, thenOpenShop) {
 
   exploreMode = mode;
 
-  exploreBack.style.display = "none";
   exploreMakerLink.style.display = mode === "browser" ? "" : "none";
 
   show("explore");
+  window.scrollTo(0, 0);
   renderExplore();
 
   await loadExplore();
+
+  if (thenOpenShop) openMakerProfile(thenOpenShop);
+
+}
+
+function shuffled(list) {
+
+  const a = list.slice();
+
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+
+  return a;
+
+}
+
+// A new random order each time. Featured makers are mixed in near the top.
+function reshuffleFeed() {
+
+  const featuredIds = new Set(exploreData.filter(p => p.featured).map(p => p.shopId));
+  const known = new Set(exploreData.map(p => p.shopId));
+
+  const all = shuffled(explorePosts.filter(post => known.has(post.shopId)));
+  const featured = all.filter(post => featuredIds.has(post.shopId));
+  const others = all.filter(post => !featuredIds.has(post.shopId));
+
+  const slots = [0, 2, 5, 9];
+
+  featured.slice(0, slots.length).forEach((post, i) => {
+    others.splice(Math.min(slots[i], others.length), 0, post);
+  });
+
+  featured.slice(slots.length).forEach(post => {
+    others.splice(Math.min(10 + Math.floor(Math.random() * Math.max(1, others.length - 9)), others.length), 0, post);
+  });
+
+  exploreOrder = others.map(post => post.id);
 
 }
 
@@ -5396,115 +5778,133 @@ async function loadExplore() {
 
   exploreState = "loading";
   exploreFromCache = false;
+  feedLimit = 30;
   renderExplore();
 
-  const { data, error } = await sb.from("public_profiles").select("*").eq("published", "true").order("updated_at", { ascending: false });
+  const [profileRes, postRes] = await Promise.all([
+    sb.from("public_profiles").select("*").eq("published", "true").order("updated_at", { ascending: false }),
+    sb.from("posts").select("*").order("created_at", { ascending: false }),
+  ]);
 
-  if (error) {
+  if (profileRes.error) {
 
     const raw = await storageGet("explore_cache");
 
     if (raw) {
-      try { exploreData = JSON.parse(raw); exploreFromCache = true; } catch (e) {}
+      try {
+        const cached = JSON.parse(raw);
+        exploreData = cached.profiles || [];
+        explorePosts = cached.posts || [];
+        exploreFromCache = true;
+      } catch (e) {}
     }
 
     exploreState = "error";
 
   } else {
 
-    exploreData = data.map(dbProfileToLocal).sort((a, b) => b.featured - a.featured);
+    exploreData = profileRes.data.map(dbProfileToLocal).sort((a, b) => b.featured - a.featured);
+    explorePosts = postRes.error ? [] : postRes.data.map(dbPostToLocal);
     exploreState = "ok";
 
-    await storageSet("explore_cache", JSON.stringify(exploreData));
+    await storageSet("explore_cache", JSON.stringify({ profiles: exploreData, posts: explorePosts }));
 
   }
 
+  reshuffleFeed();
   renderExplore();
 
 }
 
-function renderExplore() {
+async function refreshFeed() {
 
-  const query = exploreSearch.value.trim().toLowerCase();
-  const region = exploreRegion.value;
-  const craft = exploreCraft.value;
+  await loadExplore();
 
-  if (exploreState === "loading" && !exploreData.length) {
-    exploreList.innerHTML = `<div class="empty">${t("Looking for makers…")}</div>`;
-    return;
-  }
-
-  if (exploreState === "error" && !exploreData.length) {
-    exploreList.innerHTML = `<div class="empty">${t("Couldn't load makers. Check your internet and try again.")}<br><br><button class="btn secondary" onclick="loadExplore()">${t("Try again")}</button></div>`;
-    return;
-  }
-
-  const matches = exploreData.filter(p =>
-    (!region || p.region === region) &&
-    (!craft || p.craft === craft) &&
-    (!query || [p.shopName, p.region, p.area, p.craft, t(p.craft), p.bio].join(" ").toLowerCase().includes(query))
-  );
-
-  const note = exploreFromCache ? `<p class="muted" style="margin:0 0 10px">${t("Showing makers saved on this phone.")}</p>` : "";
-
-  if (!matches.length) {
-
-    const message = exploreData.length ? "No makers found. Try another area or craft." : "No makers have joined yet. Check back soon!";
-
-    exploreList.innerHTML = note + `<div class="empty">${t(message)}</div>`;
-    return;
-
-  }
-
-  if (exploreView === "photos") {
-
-    const items = buildFeedItems(matches);
-
-    if (!items.length) {
-      exploreList.innerHTML = note + `<div class="empty">${t("No photos yet. See the list of makers.")}<br><br><button class="btn secondary" onclick="setExploreView('makers')">${t("Makers")}</button></div>`;
-      return;
-    }
-
-    exploreList.innerHTML = note + `<div class="feed">` + items.slice(0, feedLimit).map(item => `
-      <div class="feed-item" data-shop="${item.shopId}" onclick="openMakerProfile('${item.shopId}')">
-        <img loading="lazy" alt="" src="${escapeAttr(publicPhotoUrl(item.path))}">
-        <div class="feed-cap"><b>${escapeHtml(item.shopName)}</b><span>${escapeHtml(t(item.craft))} · ${escapeHtml(item.region)}</span></div>
-      </div>
-    `).join("") + `</div>` + (items.length > feedLimit ? `<button class="btn secondary" style="margin:14px 0" onclick="showMorePhotos()">${t("Show more")}</button>` : "");
-
-    return;
-
-  }
-
-  exploreList.innerHTML = note + matches.map(p => `
-    <div class="maker-card" onclick="openMakerProfile('${p.shopId}')">
-      <div class="maker-thumb">${p.photos[0] ? `<img src="${escapeAttr(publicPhotoUrl(p.photos[0]))}">` : (CRAFT_ICONS[p.craft] || "✨")}</div>
-      <div class="maker-info">
-        <div class="maker-name">${escapeHtml(p.shopName)}</div>
-        <div class="muted">${escapeHtml(t(p.craft))} · ${escapeHtml(p.region)}${p.area ? ", " + escapeHtml(p.area) : ""}</div>
-        ${p.bio ? `<div class="maker-bio">${escapeHtml(p.bio)}</div>` : ""}
-      </div>
-      <div class="chev">›</div>
-    </div>
-  `).join("");
+  if (exploreState === "ok") showToast(t("Feed refreshed"));
 
 }
 
-// One photo from each maker in turn, so no single maker fills the whole feed
-function buildFeedItems(profiles) {
+function profileMatches(p) {
 
-  const ordered = profiles.slice().sort((a, b) => b.featured - a.featured);
-  const items = [];
+  const query = exploreSearch.value.trim().toLowerCase();
 
-  for (let round = 0; round < PORTFOLIO_MAX; round++) {
-    ordered.forEach(p => {
-      if (p.photos[round]) {
-        items.push({ path: p.photos[round], shopId: p.shopId, shopName: p.shopName, craft: p.craft, region: p.region });
-      }
-    });
+  if (exploreRegionValue && p.region !== exploreRegionValue) return false;
+
+  if (exploreChip === "__saved") {
+    if (!isSaved(p.shopId)) return false;
+  } else if (exploreChip && !(p.specialties.includes(exploreChip) || p.craft === exploreChip)) {
+    return false;
   }
 
-  return items;
+  if (!query) return true;
+
+  const haystack = [p.shopName, p.region, p.area, p.craft, t(p.craft), p.bio, ...p.specialties, ...p.specialties.map(s => t(s))].join(" ").toLowerCase();
+
+  return haystack.includes(query);
+
+}
+
+function chipLabel(value) {
+
+  if (value === "") return t("All");
+  if (value === "__saved") return "🔖 " + t("Saved");
+
+  return t(value);
+
+}
+
+function renderChips() {
+
+  const base = ["", "__saved", ...FEED_CHIPS];
+  const extra = exploreChip && !base.includes(exploreChip) ? [exploreChip] : [];
+
+  exploreChips.innerHTML = [...base, ...extra].map(value => `
+    <button class="chip ${value === exploreChip ? "active" : ""}" data-v="${escapeAttr(value)}" onclick="setChip(this.dataset.v)">${escapeHtml(chipLabel(value))}</button>
+  `).join("") + `<button class="chip" onclick="openMoreFilters()">${t("More")} ⌄</button>`;
+
+}
+
+function setChip(value) {
+
+  exploreChip = value;
+  feedLimit = 30;
+  renderExplore();
+
+}
+
+function openMoreFilters() {
+
+  const crafts = Object.keys(SPECIALTIES);
+  const specialties = [...new Set(Object.values(SPECIALTIES).flat())].filter(s => !FEED_CHIPS.includes(s));
+
+  const chip = value => `<button class="chip ${value === exploreChip ? "active" : ""}" data-v="${escapeAttr(value)}" onclick="setChip(this.dataset.v); closeModal()">${escapeHtml(t(value))}</button>`;
+
+  openModalHtml(`
+    <p><b>${t("Filter by")}</b></p>
+    <div class="chip-wrap">${crafts.map(chip).join("")}</div>
+    <div class="chip-wrap" style="margin-top:10px">${specialties.map(chip).join("")}</div>
+    <button class="btn secondary" style="margin-top:14px" onclick="closeModal()">${t("Close")}</button>
+  `);
+
+}
+
+function openRegionPicker() {
+
+  const row = (value, label) => `<button class="pick-row ${value === exploreRegionValue ? "on" : ""}" data-v="${escapeAttr(value)}" onclick="setRegion(this.dataset.v)">${escapeHtml(label)}</button>`;
+
+  openModalHtml(`
+    <p><b>${t("Pick a region")}</b></p>
+    <div class="pick-list">${row("", t("All regions"))}${TZ_REGIONS.map(r => row(r, r)).join("")}</div>
+  `);
+
+}
+
+function setRegion(value) {
+
+  exploreRegionValue = value;
+  closeModal();
+  feedLimit = 30;
+  renderExplore();
 
 }
 
@@ -5512,9 +5912,6 @@ function setExploreView(view) {
 
   exploreView = view;
   feedLimit = 30;
-
-  document.querySelectorAll("#exploreViewToggle button").forEach(b => b.classList.toggle("active", b.dataset.view === view));
-
   renderExplore();
 
 }
@@ -5526,50 +5923,325 @@ function showMorePhotos() {
 
 }
 
+function renderExplore() {
+
+  exploreLocLabel.textContent = exploreRegionValue || t("All regions");
+
+  renderChips();
+
+  document.querySelectorAll("#exploreViewToggle button").forEach(b => b.classList.toggle("active", b.dataset.view === exploreView));
+
+  if (exploreState === "loading" && !exploreData.length) {
+    exploreList.innerHTML = `<div class="empty">${t("Looking for makers…")}</div>`;
+    return;
+  }
+
+  if (exploreState === "error" && !exploreData.length) {
+    exploreList.innerHTML = `<div class="empty">${t("Couldn't load makers. Check your internet and try again.")}<br><br><button class="btn secondary" onclick="loadExplore()">${t("Try again")}</button></div>`;
+    return;
+  }
+
+  const profiles = exploreData.filter(profileMatches);
+  const note = exploreFromCache ? `<p class="muted" style="margin:0 0 10px">${t("Showing makers saved on this phone.")}</p>` : "";
+
+  if (!profiles.length) {
+    const message = exploreData.length ? "No makers found. Try another area or craft." : "No makers have joined yet. Check back soon!";
+    exploreList.innerHTML = note + `<div class="empty">${t(message)}</div>`;
+    return;
+  }
+
+  if (exploreView === "makers") {
+
+    exploreList.innerHTML = note + profiles.map(p => `
+      <div class="maker-card" onclick="openMakerProfile('${p.shopId}')">
+        ${avatarHtml(p, 56)}
+        <div class="maker-info">
+          <div class="maker-name">${escapeHtml(p.shopName)}</div>
+          <div class="muted">📍 ${escapeHtml(placeText(p))}</div>
+          <div class="maker-bio">${escapeHtml(specialtiesLine(p))}</div>
+        </div>
+        <button class="bm-inline ${isSaved(p.shopId) ? "on" : ""}" onclick="toggleSaved('${p.shopId}', event)">🔖</button>
+      </div>
+    `).join("");
+
+    return;
+
+  }
+
+  const byShop = new Map(profiles.map(p => [p.shopId, p]));
+  const byId = new Map(explorePosts.map(post => [post.id, post]));
+
+  lastFeedItems = exploreOrder
+    .map(id => byId.get(id))
+    .filter(post => post && byShop.has(post.shopId))
+    .map(post => ({ post, profile: byShop.get(post.shopId) }));
+
+  if (!lastFeedItems.length) {
+    exploreList.innerHTML = note + `<div class="empty">${t("No posts yet. See the list of makers.")}<br><br><button class="btn secondary" onclick="setExploreView('makers')">${t("Makers")}</button></div>`;
+    return;
+  }
+
+  exploreList.innerHTML = note + `<div class="feed">` + lastFeedItems.slice(0, feedLimit).map((item, i) => `
+    <div class="post-card" data-shop="${item.profile.shopId}" data-post="${item.post.id}" onclick="openViewer('feed', ${i})">
+      <div class="post-media">
+        ${postImage(item.post)}
+        <span class="loc-pill">📍 ${escapeHtml(item.profile.area || item.profile.region)}</span>
+        <button class="bm-btn ${isSaved(item.profile.shopId) ? "on" : ""}" onclick="toggleSaved('${item.profile.shopId}', event)">🔖</button>
+        ${item.post.type === "video" ? `<span class="play-badge">▶</span>` : ""}
+        <div class="post-over">
+          ${avatarHtml(item.profile, 34)}
+          <div><b>${escapeHtml(item.profile.shopName)}</b><span>${escapeHtml(specialtiesLine(item.profile))}</span></div>
+        </div>
+      </div>
+      <div class="post-text">
+        ${item.post.caption ? `<p>${escapeHtml(item.post.caption)}</p>` : ""}
+        <small>${timeAgo(item.post.createdAt)}</small>
+      </div>
+    </div>
+  `).join("") + `</div>` + (lastFeedItems.length > feedLimit ? `<button class="btn secondary" style="margin:14px 0" onclick="showMorePhotos()">${t("Show more")}</button>` : "");
+
+}
+
+// Pull down at the top of Explore to refresh
+let pullStartY = null;
+
+document.addEventListener("touchstart", event => {
+
+  const atTop = (document.scrollingElement || document.documentElement).scrollTop <= 0;
+  pullStartY = (atTop && document.querySelector("#explore.active")) ? event.touches[0].clientY : null;
+
+}, { passive: true });
+
+document.addEventListener("touchmove", event => {
+
+  if (pullStartY === null) return;
+
+  const pulled = event.touches[0].clientY - pullStartY;
+
+  pullHint.textContent = pulled > 80 ? t("Release to refresh") : pulled > 25 ? t("Pull down to refresh") : "";
+
+}, { passive: true });
+
+document.addEventListener("touchend", event => {
+
+  if (pullStartY === null) return;
+
+  const pulled = event.changedTouches[0].clientY - pullStartY;
+
+  pullStartY = null;
+  pullHint.textContent = "";
+
+  if (pulled > 80) refreshFeed();
+
+}, { passive: true });
+
+/* ---------- a maker's public page ---------- */
+
 function openMakerProfile(shopId) {
 
-  shownProfile = exploreData.find(p => p.shopId === shopId);
-  if (!shownProfile) return;
+  const profile = exploreData.find(p => p.shopId === shopId);
+  if (!profile) return;
 
+  if (document.querySelector("#explore.active")) exploreScrollY = window.scrollY;
+
+  shownProfile = profile;
+  shownPosts = postsOf(shopId);
   makerBackTarget = "explore";
-  renderMakerProfile(shownProfile);
+
+  renderMakerProfile(shownProfile, shownPosts);
   show("makerProfile");
+  window.scrollTo(0, 0);
 
 }
 
-function photoSrc(path) {
+function renderMakerProfile(p, posts) {
 
-  return path.startsWith("data:") ? path : publicPhotoUrl(path);
-
-}
-
-function renderMakerProfile(p) {
-
+  const preview = makerBackTarget === "myProfile";
   const greeting = encodeURIComponent(t("Hello, I found you on Nyuzi House."));
-  const photos = (p.photos || []).map(path => `<img src="${escapeAttr(photoSrc(path))}">`).join("");
+  const cover = posts.find(post => post.type === "image");
+  const videos = posts.filter(post => post.type === "video").length;
 
   makerProfileContent.innerHTML = `
-    <div class="maker-thumb" style="width:84px; height:84px; font-size:34px; margin:0 auto 10px">${p.photos && p.photos[0] ? `<img src="${escapeAttr(photoSrc(p.photos[0]))}">` : (CRAFT_ICONS[p.craft] || "✨")}</div>
-    <h2 style="margin:0 0 6px; text-align:center">${escapeHtml(p.shopName)}</h2>
-    <div style="text-align:center"><span class="craft-pill">${escapeHtml(t(p.craft))}</span></div>
-    <p class="muted" style="text-align:center; margin:8px 0 18px">📍 ${escapeHtml(p.region)}${p.area ? ", " + escapeHtml(p.area) : ""}</p>
+    <div class="mp-cover" ${cover ? `style="background-image:url('${escapeAttr(publicPhotoUrl(cover.path))}')"` : ""}>
+      <div class="mp-cover-shade"></div>
+      <button class="glass-btn glass-back" aria-label="Back" onclick="closeMakerProfile()">‹</button>
+      <div class="mp-cover-right">
+        ${preview ? "" : `<button class="glass-btn" aria-label="Share" onclick="shareMaker()">⤴</button>`}
+        ${preview ? "" : `<button class="glass-btn ${isSaved(p.shopId) ? "on" : ""}" aria-label="Save" onclick="toggleSaved('${p.shopId}', event)">🔖</button>`}
+      </div>
+      ${cover ? "" : `<div class="mp-cover-icon">${CRAFT_ICONS[p.craft] || "✨"}</div>`}
+    </div>
 
-    ${p.bio ? `<p style="line-height:1.5">${escapeHtml(p.bio)}</p>` : ""}
+    <div class="mp-body">
+      <div class="mp-avatar">${avatarHtml(p, 92)}</div>
+      <h1 class="mp-name">${escapeHtml(p.shopName)}</h1>
+      <div class="mp-meta"><span class="craft-pill">${escapeHtml(t(p.craft))}</span><span>📍 ${escapeHtml(placeText(p))}</span></div>
 
-    <a class="btn wa-btn" href="https://wa.me/${waNumber(p.whatsapp)}?text=${greeting}" target="_blank" rel="noopener" style="margin:16px 0 10px">💬 ${t("Message on WhatsApp")}</a>
-    <a class="btn secondary" href="tel:${escapeAttr(p.whatsapp)}">${t("Call")}</a>
+      ${p.specialties.length ? `<div class="chip-wrap center">${p.specialties.map(s => `<span class="chip static">${escapeHtml(t(s))}</span>`).join("")}</div>` : ""}
 
-    <div style="margin:22px 0 4px"><b>${t("Portfolio")}</b></div>
-    ${photos ? `<div class="portfolio-grid">${photos}</div>` : `<p class="muted">${t("No photos yet")}</p>`}
+      ${p.bio ? `<p class="mp-bio">${escapeHtml(p.bio)}</p>` : ""}
+
+      <div class="mp-stats">
+        <div><b>${posts.length}</b><span>${t("Posts")}</span></div>
+        <div><b>${videos}</b><span>${t("Videos")}</span></div>
+      </div>
+
+      ${posts.length ? `<div class="mp-grid">${posts.map((post, i) => `
+        <div class="tile" onclick="openViewer('profile', ${i})">
+          ${postImage(post)}
+          ${post.type === "video" ? `<span class="play-badge sm">▶</span>` : ""}
+        </div>`).join("")}</div>` : `<p class="muted" style="text-align:center; margin:24px 0">${t("No posts yet")}</p>`}
+    </div>
+
+    <div class="maker-actions">
+      <a class="btn wa-btn" href="https://wa.me/${waNumber(p.whatsapp)}?text=${greeting}" target="_blank" rel="noopener">💬 ${t("Message on WhatsApp")}</a>
+      <a class="call-btn" aria-label="Call" href="tel:${escapeAttr(p.whatsapp)}">📞</a>
+    </div>
   `;
 
 }
 
 function closeMakerProfile() {
 
-  show(makerBackTarget === "myProfile" ? "myProfile" : "explore");
+  const toEditor = makerBackTarget === "myProfile";
+
+  show(toEditor ? "myProfile" : "explore");
+
+  // Put the person back where they were
+  const y = toEditor ? editorScrollY : exploreScrollY;
+  requestAnimationFrame(() => window.scrollTo(0, y));
 
 }
+
+async function shareMaker() {
+
+  if (!shownProfile || !shownProfile.shopId) return;
+
+  const url = location.href.split(/[?#]/)[0] + "?m=" + shownProfile.shopId;
+  const text = t("{name} on Nyuzi House", { name: shownProfile.shopName });
+
+  if (navigator.share) {
+    try { await navigator.share({ title: text, text, url }); } catch (e) {}
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast(t("Link copied"));
+  } catch (e) {
+    showAlert(url);
+  }
+
+}
+
+/* ---------- full-screen viewer for photos and videos ---------- */
+
+function openViewer(source, index) {
+
+  viewerItems = source === "feed"
+    ? lastFeedItems
+    : shownPosts.map(post => ({ post, profile: shownProfile }));
+
+  viewerIndex = index;
+
+  viewer.style.display = "flex";
+  document.body.style.overflow = "hidden";
+
+  renderViewer();
+
+}
+
+function renderViewer() {
+
+  const item = viewerItems[viewerIndex];
+  if (!item) return;
+
+  const { post, profile } = item;
+  const url = publicPhotoUrl(post.path);
+  const greeting = encodeURIComponent(t("Hello, I found you on Nyuzi House."));
+
+  viewerStage.innerHTML = post.type === "video"
+    ? `<video src="${escapeAttr(url)}" ${post.poster ? `poster="${escapeAttr(publicPhotoUrl(post.poster))}"` : ""} controls playsinline autoplay preload="metadata"></video>`
+    : `<img alt="" src="${escapeAttr(url)}">`;
+
+  viewerCount.textContent = (viewerIndex + 1) + " / " + viewerItems.length;
+
+  viewerInfo.innerHTML = `
+    <div class="vi-row" onclick="viewerOpenMaker()">
+      ${avatarHtml(profile, 40)}
+      <div><b>${escapeHtml(profile.shopName)}</b><span>${escapeHtml(t(profile.craft))} · ${escapeHtml(placeText(profile))}</span></div>
+    </div>
+    ${post.caption ? `<p class="vi-caption">${escapeHtml(post.caption)}</p>` : ""}
+    <div class="vi-actions">
+      <a class="btn wa-btn" href="https://wa.me/${waNumber(profile.whatsapp)}?text=${greeting}" target="_blank" rel="noopener">💬 ${t("Message on WhatsApp")}</a>
+      <button class="btn secondary" onclick="viewerOpenMaker()">${t("View profile")}</button>
+    </div>
+  `;
+
+  viewerPrev.style.visibility = viewerIndex > 0 ? "visible" : "hidden";
+  viewerNext.style.visibility = viewerIndex < viewerItems.length - 1 ? "visible" : "hidden";
+
+}
+
+function stepViewer(delta) {
+
+  const next = viewerIndex + delta;
+  if (next < 0 || next >= viewerItems.length) return;
+
+  viewerIndex = next;
+  renderViewer();
+
+}
+
+function closeViewer() {
+
+  viewerStage.innerHTML = "";
+  viewer.style.display = "none";
+  document.body.style.overflow = "";
+
+}
+
+function viewerOpenMaker() {
+
+  const item = viewerItems[viewerIndex];
+  if (!item) return;
+
+  const shopId = item.profile.shopId;
+  const alreadyThere = document.querySelector("#makerProfile.active") && shownProfile && shownProfile.shopId === shopId;
+
+  closeViewer();
+
+  if (!alreadyThere) openMakerProfile(shopId);
+
+}
+
+let swipeStartX = null;
+
+viewerStage.addEventListener("touchstart", event => { swipeStartX = event.touches[0].clientX; }, { passive: true });
+
+viewerStage.addEventListener("touchend", event => {
+
+  if (swipeStartX === null) return;
+
+  const moved = event.changedTouches[0].clientX - swipeStartX;
+
+  swipeStartX = null;
+
+  if (Math.abs(moved) > 50) stepViewer(moved < 0 ? 1 : -1);
+
+}, { passive: true });
+
+document.addEventListener("keydown", event => {
+
+  if (viewer.style.display !== "flex") return;
+
+  if (event.key === "Escape") closeViewer();
+  if (event.key === "ArrowLeft") stepViewer(-1);
+  if (event.key === "ArrowRight") stepViewer(1);
+
+});
+
+/* ---------- a maker's own profile ---------- */
 
 function phoneFromLogin() {
 
@@ -5594,59 +6266,107 @@ function openMyProfile() {
   profBio.value = p.bio || "";
   profPublished.checked = !!p.published;
 
-  editingPhotos = (p.photos || []).slice();
-  renderPortfolioEditor();
+  editingAvatar = p.avatar || null;
+  editingSpecialties = (p.specialties || []).slice();
+
+  renderAvatarEditor();
+  renderSpecialtyChips();
+  renderPostsEditor();
 
   show("myProfile");
 
 }
 
-function renderPortfolioEditor() {
+function renderAvatarEditor() {
 
-  profPhotos.innerHTML = editingPhotos.map((path, i) => `
-    <div class="pe-item">
-      <img src="${escapeAttr(photoSrc(path))}">
-      <button class="pe-x" onclick="removePortfolioPhoto(${i})">✕</button>
+  profAvatarPreview.innerHTML = avatarHtml({ avatar: editingAvatar, shopName: profShopName.value || database.shop.name }, 84);
+
+}
+
+function renderSpecialtyChips() {
+
+  const options = SPECIALTIES[profCraft.value] || [];
+
+  editingSpecialties = editingSpecialties.filter(s => options.includes(s));
+
+  profSpecialties.innerHTML = options.map(s => `
+    <button type="button" class="chip ${editingSpecialties.includes(s) ? "active" : ""}" data-v="${escapeAttr(s)}" onclick="toggleSpecialty(this.dataset.v)">${escapeHtml(t(s))}</button>
+  `).join("");
+
+}
+
+function toggleSpecialty(value) {
+
+  editingSpecialties = editingSpecialties.includes(value)
+    ? editingSpecialties.filter(s => s !== value)
+    : [...editingSpecialties, value];
+
+  renderSpecialtyChips();
+
+}
+
+function renderPostsEditor() {
+
+  profPosts.innerHTML = database.myPosts.map(post => `
+    <div class="pe-item" data-post="${post.id}" onclick="editPost('${post.id}')">
+      ${postImage(post)}
+      ${post.type === "video" ? `<span class="play-badge sm">▶</span>` : ""}
     </div>
   `).join("");
 
-  profAddPhotoBtn.style.display = editingPhotos.length >= PORTFOLIO_MAX ? "none" : "block";
+  profAddPostBtn.style.display = database.myPosts.length >= POST_MAX ? "none" : "block";
 
 }
 
-function removePortfolioPhoto(index) {
+function readAndCropSquare(file, size, quality, callback) {
 
-  editingPhotos.splice(index, 1);
-  renderPortfolioEditor();
+  const reader = new FileReader();
+
+  reader.onload = e => {
+
+    const img = new Image();
+
+    img.onload = () => {
+
+      const side = Math.min(img.width, img.height);
+      const canvas = document.createElement("canvas");
+
+      canvas.width = size;
+      canvas.height = size;
+
+      canvas.getContext("2d").drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+
+      callback(canvas.toDataURL("image/jpeg", quality));
+
+    };
+
+    img.onerror = () => showAlert(t("Couldn't read that photo. Please try another one."));
+
+    img.src = e.target.result;
+
+  };
+
+  reader.readAsDataURL(file);
 
 }
 
-function handlePortfolioPhoto(event) {
+function handleAvatarPhoto(event) {
 
   const file = event.target.files[0];
   event.target.value = "";
 
   if (!file) return;
 
-  if (editingPhotos.length >= PORTFOLIO_MAX) {
-    showAlert(t("You can add up to 6 photos."));
-    return;
-  }
-
-  readAndCompressImage(file, 900, 0.65, async dataUrl => {
-
-    showToast(t("Uploading photo…"));
+  readAndCropSquare(file, 320, 0.75, async dataUrl => {
 
     try {
 
-      const path = await uploadPhoto(dataUrl, "portfolio");
-
-      editingPhotos.push(path);
-      renderPortfolioEditor();
+      editingAvatar = await uploadPhoto(dataUrl, "avatar");
+      renderAvatarEditor();
 
     } catch (err) {
 
-      showAlert(t("Photos need an internet connection. Connect and try again."));
+      showAlert(t("Uploads need an internet connection. Connect and try again."));
 
     }
 
@@ -5664,7 +6384,8 @@ function readProfileForm() {
     area: profArea.value.trim(),
     whatsapp: profWhatsapp.value.trim(),
     bio: profBio.value.trim(),
-    photos: editingPhotos.slice(),
+    avatar: editingAvatar,
+    specialties: editingSpecialties.slice(),
     published: profPublished.checked,
   };
 
@@ -5682,7 +6403,8 @@ async function persistProfile(profile) {
     area: profile.area || null,
     whatsapp: profile.whatsapp,
     bio: profile.bio || null,
-    photo_paths: profile.photos,
+    avatar_path: profile.avatar || null,
+    specialties: profile.specialties,
     published: profile.published,
     updated_at: new Date().toISOString(),
   };
@@ -5716,13 +6438,303 @@ async function saveMyProfile() {
 
 function previewMyProfile() {
 
+  editorScrollY = window.scrollY;
+
   shownProfile = readProfileForm();
+  shownPosts = database.myPosts.slice();
   makerBackTarget = "myProfile";
 
-  renderMakerProfile(shownProfile);
+  renderMakerProfile(shownProfile, shownPosts);
   show("makerProfile");
+  window.scrollTo(0, 0);
 
 }
+
+/* ---------- posting photos and videos ---------- */
+
+async function uploadFile(blob, folder, ext, contentType) {
+
+  const uid = currentSession.user.id;
+  const path = uid + "/" + folder + "/" + Date.now() + "-" + Math.random().toString(36).slice(2) + "." + ext;
+
+  const { error } = await sb.storage.from("photos").upload(path, blob, {
+    contentType: contentType || "application/octet-stream",
+    upsert: true,
+  });
+
+  if (error) throw error;
+
+  return path;
+
+}
+
+function videoExt(file) {
+
+  const match = (file.name || "").match(/\.([A-Za-z0-9]+)$/);
+
+  return match ? match[1].toLowerCase() : (String(file.type).includes("quicktime") ? "mov" : "mp4");
+
+}
+
+// Reads the length of a video and grabs a still picture from it
+function inspectVideo(file) {
+
+  return new Promise(resolve => {
+
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+
+    let done = false;
+
+    const finish = result => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      URL.revokeObjectURL(url);
+      resolve(result);
+    };
+
+    const timer = setTimeout(() => finish({ ok: false }), 10000);
+
+    video.preload = "metadata";
+    video.muted = true;
+    video.playsInline = true;
+
+    video.onerror = () => finish({ ok: false });
+
+    const grabStill = () => {
+
+      const duration = video.duration;
+
+      video.onseeked = () => {
+
+        let poster = null;
+
+        try {
+          const scale = Math.min(1, 640 / (video.videoWidth || 640));
+          const canvas = document.createElement("canvas");
+          canvas.width = (video.videoWidth || 640) * scale;
+          canvas.height = (video.videoHeight || 360) * scale;
+          canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+          poster = canvas.toDataURL("image/jpeg", 0.7);
+        } catch (e) {}
+
+        finish({ ok: true, duration, poster });
+
+      };
+
+      video.currentTime = Math.min(0.5, (duration || 1) / 2);
+
+    };
+
+    video.onloadedmetadata = () => {
+
+      if (video.duration === Infinity) {
+        // Some phones report no length until the end is reached
+        video.onseeked = () => { video.onseeked = null; grabStill(); };
+        video.currentTime = 1e101;
+      } else {
+        grabStill();
+      }
+
+    };
+
+    video.src = url;
+
+  });
+
+}
+
+function startPost() {
+
+  postMediaInput.click();
+
+}
+
+async function handlePostMedia(event) {
+
+  const file = event.target.files[0];
+  event.target.value = "";
+
+  if (!file) return;
+
+  if (database.myPosts.length >= POST_MAX) {
+    showAlert(t("You can have up to 20 posts. Delete one in your profile first."));
+    openMyProfile();
+    return;
+  }
+
+  if (String(file.type).startsWith("video/")) {
+
+    if (file.size > VIDEO_MAX_BYTES) {
+      showAlert(t("That video is too big. Please choose one under 25 MB."));
+      return;
+    }
+
+    const info = await inspectVideo(file);
+
+    if (!info.ok) {
+      showAlert(t("We couldn't read that video. Try another one."));
+      return;
+    }
+
+    if (info.duration > VIDEO_MAX_SECONDS + 0.5) {
+      showAlert(t("Videos can be up to 30 seconds long."));
+      return;
+    }
+
+    openComposer({ kind: "video", file, poster: info.poster, previewUrl: URL.createObjectURL(file) });
+
+  } else {
+
+    readAndCompressImage(file, 1000, 0.7, dataUrl => openComposer({ kind: "image", dataUrl }));
+
+  }
+
+}
+
+function openComposer(media) {
+
+  pendingPost = media;
+  editingPostId = null;
+
+  const preview = media.kind === "video"
+    ? `<video src="${escapeAttr(media.previewUrl)}" muted playsinline controls preload="metadata"></video>`
+    : `<img alt="" src="${media.dataUrl}">`;
+
+  openModalHtml(`
+    <p><b>${t("New post")}</b></p>
+    <div class="composer-preview">${preview}</div>
+    <textarea id="postCaption" maxlength="140" placeholder="${escapeAttr(t("Write a caption (optional)"))}"></textarea>
+    <button class="btn" onclick="submitPost()">${t("Post")}</button>
+    <button class="btn secondary" style="margin-top:10px" onclick="cancelPost()">${t("Cancel")}</button>
+  `);
+
+}
+
+function cancelPost() {
+
+  pendingPost = null;
+  closeModal();
+
+}
+
+async function submitPost() {
+
+  const media = pendingPost;
+  if (!media) return;
+
+  const caption = postCaption.value.trim();
+
+  openModalHtml(`<p><b>${t("Uploading…")}</b></p><p class="muted">${t("Please keep this open until it finishes.")}</p>`);
+
+  try {
+
+    const uid = currentSession.user.id;
+
+    let path;
+    let posterPath = null;
+
+    if (media.kind === "image") {
+
+      path = await uploadPhoto(media.dataUrl, "posts");
+
+    } else {
+
+      path = await uploadFile(media.file, "posts", videoExt(media.file), media.file.type);
+      if (media.poster) posterPath = await uploadPhoto(media.poster, "posts");
+
+    }
+
+    const post = { id: genId(), shopId: uid, path, type: media.kind, poster: posterPath, caption, createdAt: new Date().toISOString() };
+
+    database.myPosts.unshift(post);
+    pendingPost = null;
+
+    await saveDatabase();
+    await enqueue({
+      kind: "upsert", table: "posts", isInsert: true,
+      payload: { id: post.id, shop_id: uid, media_path: path, media_type: post.type, poster_path: posterPath, caption: caption || null, created_at: post.createdAt },
+    });
+
+    closeModal();
+
+    const live = database.publicProfile && database.publicProfile.published;
+
+    showToast(live ? t("Posted") : t("Saved. It will show once your profile is in the directory."));
+
+    if (document.querySelector("#myProfile.active")) renderPostsEditor();
+
+  } catch (err) {
+
+    closeModal();
+    showAlert(t("Uploads need an internet connection. Connect and try again."));
+
+  }
+
+}
+
+function editPost(id) {
+
+  const post = database.myPosts.find(x => x.id === id);
+  if (!post) return;
+
+  editingPostId = id;
+  pendingPost = null;
+
+  const url = publicPhotoUrl(post.path);
+
+  const preview = post.type === "video"
+    ? `<video src="${escapeAttr(url)}" controls playsinline preload="metadata"></video>`
+    : `<img alt="" src="${escapeAttr(url)}">`;
+
+  openModalHtml(`
+    <p><b>${t("Edit post")}</b></p>
+    <div class="composer-preview">${preview}</div>
+    <textarea id="postCaption" maxlength="140" placeholder="${escapeAttr(t("Write a caption (optional)"))}">${escapeHtml(post.caption)}</textarea>
+    <button class="btn" onclick="savePostEdit()">${t("Save caption")}</button>
+    <button class="btn danger" style="margin-top:10px" onclick="deletePost()">${t("Delete post")}</button>
+    <button class="btn secondary" style="margin-top:10px" onclick="closeModal()">${t("Cancel")}</button>
+  `);
+
+}
+
+async function savePostEdit() {
+
+  const post = database.myPosts.find(x => x.id === editingPostId);
+  if (!post) return;
+
+  post.caption = postCaption.value.trim();
+
+  await saveDatabase();
+  await enqueue({ kind: "upsert", table: "posts", isInsert: false, rowId: post.id, payload: { caption: post.caption || null } });
+
+  closeModal();
+  showToast(t("Post updated"));
+
+}
+
+function deletePost() {
+
+  const id = editingPostId;
+
+  closeModal();
+
+  showConfirm(t("Remove this post? This cannot be undone."), async () => {
+
+    database.myPosts = database.myPosts.filter(x => x.id !== id);
+
+    await saveDatabase();
+    await enqueue({ kind: "delete", table: "posts", rowId: id });
+
+    renderPostsEditor();
+    showToast(t("Post removed"));
+
+  });
+
+}
+
+/* ---------- + menu and the Profile tab ---------- */
 
 function openQuickAdd() {
 
@@ -5733,7 +6745,7 @@ function openQuickAdd() {
       <button class="quick-item" onclick="quickAdd('order')">📦<span>${t("New order")}</span></button>
       <button class="quick-item" onclick="quickAdd('expense')">➖<span>${t("Add Expense")}</span></button>
       <button class="quick-item" onclick="quickAdd('income')">➕<span>${t("Add Income")}</span></button>
-      <button class="quick-item" onclick="quickAdd('photo')" style="grid-column: span 2">📷<span>${t("Post a photo")}</span></button>
+      <button class="quick-item" onclick="quickAdd('photo')" style="grid-column: span 2">📷<span>${t("Post a photo or video")}</span></button>
     </div>
     <button class="btn secondary" onclick="closeModal()">${t("Cancel")}</button>
   `);
@@ -5748,58 +6760,7 @@ function quickAdd(kind) {
   if (kind === "order") newOrder();
   if (kind === "expense") newExpense();
   if (kind === "income") newIncome();
-  if (kind === "photo") postPhotoInput.click();
-
-}
-
-function handlePostPhoto(event) {
-
-  const file = event.target.files[0];
-  event.target.value = "";
-
-  if (!file) return;
-
-  const profile = database.publicProfile;
-
-  if (profile && profile.photos.length >= PORTFOLIO_MAX) {
-    showAlert(t("You can add up to 6 photos. Remove one in your profile first."));
-    openMyProfile();
-    return;
-  }
-
-  readAndCompressImage(file, 900, 0.65, async dataUrl => {
-
-    showToast(t("Uploading photo…"));
-
-    let path;
-
-    try {
-
-      path = await uploadPhoto(dataUrl, "portfolio");
-
-    } catch (err) {
-
-      showAlert(t("Photos need an internet connection. Connect and try again."));
-      return;
-
-    }
-
-    if (profile && profile.published) {
-
-      await persistProfile({ ...profile, photos: [...profile.photos, path] });
-      showToast(t("Photo posted"));
-      return;
-
-    }
-
-    // Not in the directory yet: finish the profile first, with the photo already added
-    openMyProfile();
-    editingPhotos.push(path);
-    renderPortfolioEditor();
-
-    showAlert(t("Photo added. Fill in your details and switch on 'Show me in the directory' to post it."));
-
-  });
+  if (kind === "photo") startPost();
 
 }
 
